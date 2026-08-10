@@ -1,0 +1,161 @@
+<div class="modal" tabindex="-1" role="dialog" [ngStyle]="{'display': displayStyle}">
+    <facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" *ngIf="!isEdit">New User</h5>
+
+                <h5 class="modal-title" *ngIf="isEdit">Edit User {{ userModel != undefined ? (userModel.firstName != ""
+                    ||
+                    userModel.lastName != "") ? ' - ' + userModel.firstName + ' ' + userModel.lastName : '' : '' }}</h5>
+                <button class="btn" mat-icon-button (click)="closePopup()"><span
+                        class="material-icons-round">close</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="userForm">
+                    <div class="form w-100">
+                        <label class="form__label">First Name<span class="danger-color">*</span></label>
+                        <input class="form-control" placeholder="First Name" formControlName="firstName">
+                        <mat-error *ngIf="validationModel.displayMessage.firstName">
+                            {{validationModel.displayMessage.firstName}}
+                        </mat-error>
+                    </div>
+                    <div class="form w-100 mt-3">
+                        <label class="form__label">Last Name<span class="danger-color">*</span></label>
+                        <input class="form-control" placeholder="Last Name" formControlName="lastName">
+                        <mat-error *ngIf="validationModel.displayMessage.lastName">
+                            {{validationModel.displayMessage.lastName}}
+                        </mat-error>
+                    </div>
+                    <div class="form w-100 mt-3">
+                        <label class="form__label">Email<span class="danger-color">*</span></label>
+                        <input class="form-control" placeholder="Email" formControlName="email">
+                        <mat-error *ngIf="validationModel.displayMessage.email">
+                            {{validationModel.displayMessage.email}}
+                        </mat-error>
+                    </div>
+                    <div class="form w-100 mt-3" *ngIf="!isEdit">
+                        <label class="form__label">Username<span class="danger-color">*</span></label>
+                        <input class="form-control" placeholder="Username" formControlName="userName">
+                        <mat-error *ngIf="validationModel.displayMessage.userName">
+                            {{validationModel.displayMessage.userName}}
+                        </mat-error>
+                    </div>
+
+                    <div class="inp w-2 mt-3">
+                        <label class="form__label">Events</label>
+                        <mat-list-item class="primary-imenu-item" role="listitem">
+                            <mat-select matInput class="form-select w-100" placeholder="Select Event/Events"
+                                formControlName="eventIds" multiple [(value)]="selectedEvents">
+
+                                <div class="check--box">
+                                    <input class="mr-2" type="checkbox" [checked]="isAllSelected" (click)="toggleAllSelection($event)">
+                                    <span>All</span> 
+                                </div>
+
+                                <mat-option *ngFor="let event of events" [value]="event.key" (click)="togglePerEvent()">
+                                    {{event.value}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-list-item>
+                    </div>
+                    <mat-error *ngIf="validationModel.displayMessage.eventIds">
+                        {{validationModel.displayMessage.eventIds}}
+                    </mat-error>
+
+                    <div class="inp w-2 mt-3">
+                        <label class="form__label">User Role</label>
+                        <input type="text" matInput class="form-select w-100" formControlName="role" required
+                            placeholder="Select user role" [matAutocomplete]="autoRoleName">
+                        <mat-autocomplete #autoRoleName="matAutocomplete"
+                            (optionSelected)="onPermissionProcess($event)">
+                            <mat-option *ngFor="let userRole of roleFilteredOption | async"
+                                [value]="userRole.roleName">{{ userRole.roleName }}
+                            </mat-option>
+                        </mat-autocomplete>
+                    </div>
+                    <mat-error *ngIf="validationModel.displayMessage.role">
+                        {{validationModel.displayMessage.role}}
+                    </mat-error>
+
+
+                    <div class="form w-100 mt-2" *ngIf="userForm.get('role')?.value != '' ? true : false">
+                        <a (click)="getPermissionTemplateById()" class="fw-500 fs-sm color-primary link">Customize user
+                            role permission</a>
+                    </div>
+                    <div class="form w-100 mt-3" *ngIf="!isEdit">
+                        <div class="pass-form w-100">
+                            <label class="pass-form__label">Password<span class="danger-color">*</span></label>
+                            <div class="pass-inp">
+                                <input autocomplete="new-password" class="form-control"
+                                [type]="isPasswordHide ? 'password' : 'text'" placeholder="Password"
+                                formControlName="password">
+                                <button mat-icon-button matSuffix (click)="isPasswordHide = !isPasswordHide"
+                                [attr.aria-label]="'Hide password'" [attr.aria-pressed]="isPasswordHide">
+                                <mat-icon>{{isPasswordHide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                                </button>
+                            </div>
+                            <mat-error *ngIf="validationModel.displayMessage.password">
+                                {{validationModel.displayMessage.password}}
+                            </mat-error>
+                        </div>
+                    </div>
+                    <div class="form w-100 mt-3" *ngIf="!isEdit">
+                        <div class="pass-form w-100">
+                            <label class="pass-form__label">Confirm Password<span class="danger-color">*</span></label>
+                            <div class="pass-inp">
+                                <input class="form-control" [type]="isConfirmPasswordHide ? 'password' : 'text'"
+                                placeholder="Confirm Password" formControlName="confirmPassword">
+                                <button mat-icon-button matSuffix (click)="isConfirmPasswordHide = !isConfirmPasswordHide"
+                                [attr.aria-label]="'Hide password'" [attr.aria-pressed]="isConfirmPasswordHide">
+                                <mat-icon>{{isConfirmPasswordHide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                                </button>
+                            </div>
+                            <mat-error *ngIf="validationModel.displayMessage.confirmPassword">
+                                {{validationModel.displayMessage.confirmPassword}}
+                            </mat-error>
+                        </div>
+                    </div>
+
+                    <div class="inp w-2 mt-3">
+                        <label class="form__label">Time Zone</label>
+                        <input type="text" class="form-control" formControlName="timeZone" [readOnly]="true">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light mr-2" (click)="resetClicked()" *ngIf="!isEdit">Reset</button>                
+                <button type="button" class="btn btn-primary" (click)="createUser()" *ngIf="!isEdit">
+                    Save
+                </button>
+                <button type="button" class="btn btn-primary" (click)="updateUser()" *ngIf="isEdit">
+                    Update
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal" tabindex="-1" role="dialog" [ngStyle]="{'display': displayPermissionStyle}">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ roleName }}</h5>
+            </div>
+            <div class="modal-body">
+                <facets-user-permission-view [isView]="isView" [isPermissionEdit]="isPermissionEdit"
+                    [selectedPermission]="selectedPermissions" [isPermissionSelection]="isPermissionSelection"
+                    [roleId]="roleId" (selectedPermissionNames)="selectedPermissionNames($event)"
+                    [retrievedPermission]="retrievedPermissions"></facets-user-permission-view>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="resetPermission()">Reset</button>
+                <button type="button" class="btn btn-primary" (click)="addUserPermission()">
+                    Ok
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,15 @@
+<section class="back-image">
+    <div class="welcome">
+        <h3>Welcome to</h3>
+        <h1>Event Management System</h1>
+        <div class="event-within">
+            <div class="mr d-n" *ngIf="user.imageURL == null || user.imageURL == undefined">
+                <span class="material-icons-outlined profile">
+                    account_circle
+                </span>
+            </div>
+            <img *ngIf="user.imageURL != null || user.imageURL != undefined" [src]="user.imageURL" >
+            <p class="sub">{{ user.firstName }} {{ user.lastName }}</p>
+        </div>
+    </div>
+</section>

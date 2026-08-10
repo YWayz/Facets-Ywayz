@@ -1,0 +1,37 @@
+<div class="modal" tabindex="-1" role="dialog" [ngStyle]="{'display': displayStyle}">
+    <facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" *ngIf="!isEdit">New User Role</h5>
+                <h5 class="modal-title" *ngIf="isEdit">Edit User Role</h5>
+                <button class="btn" mat-icon-button (click)="closePopup()"><span
+                        class="material-icons-round">close</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="userRoleForm">
+                    <div class="form w-100">                        
+                        <label class="form__label">User Role<span class="danger-color">*</span></label>
+                        <input class="form-control" placeholder="Ex. Admin" formControlName="roleName" autocomplete="off">         
+                        <mat-error *ngIf="validationModel.displayMessage.roleName">
+                            {{validationModel.displayMessage.roleName}}
+                        </mat-error>
+                    </div>
+                    <div class="form w-100 mt-3">
+                        <facets-user-permission-view #userPermissionComponent [isPermissionEdit]="true"></facets-user-permission-view>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light mr-2" (click)="closePopup()">Discard</button>
+                <button type="button" class="btn btn-primary" *ngIf="!isEdit" (click)="createUserRole()" [facetsAuthorization]="[superAdminPermissions.all, rolePermissions.create]">
+                    Save
+                </button>
+                <button type="button" class="btn btn-primary" *ngIf="isEdit" (click)="updateUserRole()" [facetsAuthorization]="[superAdminPermissions.all, rolePermissions.update]">
+                    Update
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

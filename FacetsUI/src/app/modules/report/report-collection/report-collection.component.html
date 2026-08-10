@@ -1,0 +1,108 @@
+<header>
+    <h3>Visitor Collection Report</h3>
+    <div class="btn-al-right">
+        <button type="button" class="btn btn-primary" *ngIf="!showFilter"
+            (click)="showFilter = !showFilter">Filter</button>
+        <button type="button" class="btn btn-link d-flex justify-content-center align-items-center" (click)="export()">
+            <span class="material-icons-outlined mr-1">file_download</span>
+            <span>Export</span>
+        </button>
+    </div>
+</header>
+
+<section class="container">
+    <section class="card-grey">
+        <div class="search">
+
+            <div class="col">
+                <label class="mr-2">
+                    <input class="mr-1" type="radio" name="optradio-pass" [(ngModel)]="selectedReportFilter"
+                        [value]="'specific'" (change)="changeFilter()" checked>Specific
+                </label>
+                <label>
+                    <input class="mr-1" type="radio" name="optradio-pass" [(ngModel)]="selectedReportFilter"
+                        [value]="'range'" (change)="changeFilter()">Date Range
+                </label>
+            </div>
+
+            <div class="form-date" *ngIf="!isSpecific">
+                <mat-date-range-input [rangePicker]="paymentDatePicker">
+                    <input matStartDate [(ngModel)]="collectionReportFilterModel.paidFromDate" placeholder="Start date">
+                    <input matEndDate [(ngModel)]="collectionReportFilterModel.paidToDate" placeholder="End date">
+                </mat-date-range-input>
+                <mat-datepicker-toggle [for]="paymentDatePicker" class="date-time">
+                </mat-datepicker-toggle>
+                <mat-date-range-picker #paymentDatePicker>
+                    <mat-date-range-picker-actions>
+                        <button mat-button matDateRangePickerCancel (click)="cancel()">Cancel</button>
+                        <button mat-raised-button color="primary" matDateRangePickerApply
+                            (click)="getCollectionReportDetails()">Apply</button>
+                    </mat-date-range-picker-actions>
+                </mat-date-range-picker>
+            </div>
+            <div class="form-single-date" *ngIf="isSpecific">
+                <input class="form-icon__input" placeholder=" " [matDatepicker]="specificDatePicker"
+                    [(ngModel)]="collectionReportFilterModel.specificDate" (dateChange)="getCollectionReportDetails()">
+                <mat-datepicker-toggle [for]="specificDatePicker" class="date-time">
+                </mat-datepicker-toggle>
+                <mat-datepicker #specificDatePicker></mat-datepicker>
+                <label class="form-icon__label">Specific Date<span class="danger-color"></span></label>
+            </div>
+        </div>
+    </section>
+
+    <div class="card-filter mt-4" *ngIf="showFilter">
+        <div class="filter">
+            <mat-form-field>
+                <mat-label>Select Counter</mat-label>
+                <mat-select [(ngModel)]="collectionReportFilterModel.counterIds" multiple>
+                    <mat-option *ngFor="let counter of counters" [value]="counter.id">{{counter.name}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field>
+                <mat-label>Select Pass Category</mat-label>
+                <mat-select [(ngModel)]="collectionReportFilterModel.passCategoryIds" multiple>
+                    <mat-option *ngFor="let pass of passCategories" [value]="pass.key">{{pass.value}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field>
+                <mat-label>Select User</mat-label>
+                <mat-select [(ngModel)]="collectionReportFilterModel.registrationUserIds" multiple>
+                    <mat-option *ngFor="let user of users" [value]="user.key">{{user.value}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <button type="button" class="btn btn-primary h-1" (click)="getCollectionReportDetails()">search</button>
+            <button type="button" class="btn btn-link d-flex justify-content-center align-items-center h-1"
+                *ngIf="showFilter" (click)="cancelFilter()">Cancel
+                Filter</button>
+
+        </div>
+    </div>
+    <facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+
+    <table class="table mt-4">
+        <tr class="table-head">
+            <th>Description</th>
+            <th>Card Count</th>
+            <th>Card Amount</th>
+            <th>Cash Count</th>
+            <th>Cash Amount</th>
+            <th>Total Count</th>
+            <th>Collected Amount</th>
+        </tr>
+        <tr class="table-head" *ngFor="let collection of collections">
+            <td>{{collection.description}}</td>
+            <td>{{collection.cardPayment}}</td>
+            <td>{{collection.cardAmount | number:'1.2'}}</td>
+            <td>{{collection.cashPayment}}</td>
+            <td>{{collection.cashAmount | number:'1.2'}}</td>
+            <td>{{collection.registeredCount}}</td>
+            <td>{{collection.amount | number:'1.2'}}</td>
+        </tr>
+    </table>
+    <facets-no-records [items]="collections"></facets-no-records>
+
+</section>

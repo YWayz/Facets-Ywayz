@@ -1,0 +1,43 @@
+p{
+    font-size: 16px;
+    font-weight: 300;
+    margin-top: 15px;
+}
+
+.material-icons-outlined{
+    font-size: 200px !important;
+    margin: 15px 0px;
+    color: #ACACAC;
+}
+
+.white{
+    background-color: #ffff;
+    border-radius: 6px;
+    padding: 30px 20px;
+    border: 1px solid #D9D9D9;
+    border-top-right-radius:0px !important;
+    border-bottom-right-radius: 0px !important;
+}
+
+.grey{
+    background-color: #D9D9D9;
+    border-radius: 6px;
+    padding: 30px 20px;
+    border: 1px solid #D9D9D9;
+    border-top-left-radius:0px !important;
+    border-bottom-left-radius: 0px !important;
+    
+}
+
+.valid-card{
+    border-radius: 4px;
+    background-color: #ffff;
+    padding: 20px;
+    margin-top: 86px;
+}
+
+.display-space{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

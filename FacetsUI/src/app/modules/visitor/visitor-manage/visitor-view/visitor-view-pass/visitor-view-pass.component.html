@@ -1,0 +1,93 @@
+<facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+<div class="container">
+    <div class="info-card">
+        <div class="card-h container-fluid">
+            <div class="sub-head">Pass Information</div>
+        </div>
+        <hr>
+        <div class="card-b">
+            <div class="container-fluid">
+                <label class="top-lab">Registered Event Dates</label>
+                <div class="form-group mt-4 flex">
+                    <div class="d-flex" *ngFor="let eventDate of visitorPassRegistration.attendanceSchedules">
+                        <div class="date-card">
+                            <div class="date">{{eventDate.registeredEventDate | date:'dd'}}
+                            </div>
+                            <div class="month">{{eventDate.registeredEventDate | date:'MMM'}}
+                            </div>
+                        </div>
+                        <div>
+                            <div class="inp mt-1">
+                                <label>Registration Method:</label>
+                                {{ eventDate.registeredMethod }}
+                            </div>
+                            <div class="inp mt-1">
+                                <label>Registered On:</label>
+                                {{eventDate.registeredDateTime | date:
+                                'yyyy-MM-dd hh:mm a' }}
+                            </div>
+    
+                            <div class="inp mt-1">
+                                <label>Pass verified On:</label>
+                                {{eventDate.passGeneratedAt | date:
+                                'yyyy-MM-dd hh:mm a' }}
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-lg-4 col-md-4 col-sm-12">
+                        <div class="form-group w-100">
+                            <label class="top-lab">Registered Pass Category</label>
+                            <div class="inp mt-1">{{visitorPassRegistration.passCategoryName}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-card" *ngIf="visitorPassRegistration.visitorPavilionSessionAttendanceSchedules.length > 0">
+        <div class="card-h container-fluid">
+            <div class="sub-head">Pavilion Session Pass Information</div>
+        </div>
+        <hr>
+        <div class="card-b">
+            <div class="container-fluid">
+                <label class="top-lab">Registered Pavilion Sessions</label>
+                <div class="form-group mt-4 flex">
+                    <div class="d-flex" *ngFor="let pavSession of visitorPassRegistration.visitorPavilionSessionAttendanceSchedules">
+                        <div class="date-card-pavs">
+                            <div class="date-pavs">{{pavSession.pavilionName}}
+                            </div>
+                            <div class="month-pavs">{{pavSession.pavilionSessionDate | date: 'dd/MM/yyyy'}}, {{pavSession.startTime | date:
+                                'hh:mm a'}} - {{pavSession.endTime
+                                | date: 'hh:mm a'}}
+                            </div>
+                        </div>
+                        <div>
+                            <div class="inp mt-1">
+                                <label>Registration Method:</label>
+                                {{ pavSession.registeredMethod }}
+                            </div>
+                            <div class="inp mt-1">
+                                <label>Registered On:</label>
+                                {{pavSession.registeredDateTime | date:
+                                'yyyy-MM-dd hh:mm a' }}
+                            </div>
+    
+                            <div class="inp mt-1">
+                                <label>Pass verified On:</label>
+                                {{pavSession.passGeneratedAt | date:
+                                'yyyy-MM-dd hh:mm a' }}
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

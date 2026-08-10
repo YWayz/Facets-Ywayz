@@ -1,0 +1,55 @@
+<facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+<section class="container">
+    <div class="col-lg-12">
+        <div class="row">
+            <div class="col">
+                <facets-pass-template-size (sendDimension)="setDimension($event)"></facets-pass-template-size>
+            </div>
+        </div>
+        <div class="row mt-4 mb-4">
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                <div class="info-card">
+                    <div class="card-h container-fluid mb-4">
+                        <div class="sub-head">Pass Details</div>
+                    </div>
+                    <facets-pass-template-value [memberType]="'visitor'"></facets-pass-template-value>
+                </div>
+            </div>
+            <div class="col-lg-9 col-md-9 col-sm-12">
+                <div class="info-card">
+                    <div class="card-h container-fluid mb-4">
+                        <div class="sub-head">Values to have in the pass</div>
+                        <button class="remove" (click)="removeObjectFront()">Remove</button>
+                    </div>
+                    <div class="card-b">
+                        <div class="container-fluid">
+                            <div class="canvas-lay">
+                                <div class="template-pr">
+                                    <div class="mb-2">Drag & Drop here..</div>
+                                    <div id="canvas_contVisitor" (drop)="dropElement($event)"
+                                    (dragover)="allowDrop($event)">
+                                    <canvas id="canvasVisitor"
+                                        [ngStyle]="{'border': (width != 0 && height != 0) ? '1px solid #000000' : ''}">
+                                    </canvas>
+                                </div>
+                                </div>
+                                <div>
+                                    <div class="mb-2">Display View</div>
+                                    <div id="canvas_cont2" class="canvas-wrapper">
+                                        <canvas id="canvasVisitorPreview"
+                                            [ngStyle]="{'border': (width != 0 && height != 0) ? '1px solid #000000' : ''}">
+                                        </canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="action-footer mt-4">
+        <button type="button" class="btn btn-light mr-2" routerLink="/admin/event">Discard</button>
+        <button type="button" class="btn btn-primary" (click)="save()">Save</button>
+    </div>
+</section>

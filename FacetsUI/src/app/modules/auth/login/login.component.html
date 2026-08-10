@@ -1,0 +1,48 @@
+<form [formGroup]="loginForm">
+    <div class="body">
+        <div class="box">
+            <div class="log">
+                <img src="../../../../assets/images/logo.svg" alt="Sri Lanka Gem and Jewellery Association" width="230"
+                    height="100">
+            </div>
+            <div class="container">
+                <div class="top">
+                    <img src="../../../../assets/images/LOGIN.svg" alt="Login" width="200" height="200">
+                </div>
+
+                <div class="wrapper mb-4">
+                    <div class="input-data">
+                        <input type="text" required formControlName="email">
+                        <div class="underline"></div>
+                        <label>Username or Email</label>
+                    </div>
+                    <div class="danger" *ngIf="validationModel.displayMessage.email">
+                        {{validationModel.displayMessage.email}}
+                    </div>
+                </div>
+
+                <div class="wrapper mb-4">
+                    <div class="input-data">
+                        <input type="password" required formControlName="password">
+                        <div class="underline"></div>
+                        <label>Password</label>
+                    </div>
+                    <div class="danger" *ngIf="validationModel.displayMessage.password">
+                        {{validationModel.displayMessage.password}}
+                    </div>
+                </div>
+
+                <div class="input-field mt-4">
+                    <button class="submit" (click)="authenticate()" [disabled]="isRequested">
+                        <i *ngIf="isRequested" class="spinner-border spinner-border-sm me-2"></i>
+                        Login</button>
+                </div>
+                <div class="two-col">
+                    <div class="two mt-4 color-blue">
+                        <a (click)="openResetPasswordLink()">Forgot password?</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

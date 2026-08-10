@@ -1,0 +1,36 @@
+<facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+<section class="container">
+    <div class="both-type">
+        <div class="pay-dis">
+            <form [formGroup]="paymentSettingsForm">
+                <h6 class="mb-3">For Live registration</h6>
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="form-group w-100">
+                        <label class="mr-2">
+                            <input class="mr-1" type="radio" name="onSitePayingMode" formControlName="onSitePayingMode"
+                                [value]="'PayAtRegistration'" checked>Pay at Registration
+                        </label>
+                        <label>
+                            <input class="mr-1" type="radio" name="onSitePayingMode" formControlName="onSitePayingMode"
+                                [value]="'PayAtPassGeneration'">Pay at Pass Generation
+                        </label>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="pay-dis">
+            <div class="mt-4">
+                <h6>For Online Registration</h6>
+                <label class="mt-4 mb-4 pl-n">Pay Later</label>
+                <label class="switch mb-4">
+                    <input type="checkbox" [checked]="paymentSettingsModel.payLaterForOnlineRegistration"
+                        (click)="paymentModeChanged($event)">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <button type="button" class="btn btn-primary"
+                [facetsAuthorization]="[superAdminPermissions.all, paymentSettingsPermissions.paymentSettingsUpdate]"
+                (click)="updatePaymentSettings()">Update</button>
+        </div>
+    </div>
+</section>

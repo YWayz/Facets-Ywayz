@@ -1,0 +1,55 @@
+<header>
+    <h3>Events</h3>
+    <div class="btn-al-right">
+        <button type="button" class="btn btn-primary" [routerLink]="'create'"
+            [facetsAuthorization]="[superAdminPermissions.all,eventPermissions.create]">+ event</button>
+    </div>
+</header>
+
+<facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+<section class="container">
+    <table class="table">
+        <tr class="table-head">
+            <th class="col-1">Event</th>
+            <th class="col-des">Description</th>
+            <th class="center-align"
+                [facetsAuthorization]="[superAdminPermissions.all,eventPermissions.toggleEventStatus]">Active / Inactive
+            </th>
+            <th class="center-align last">Settings</th>
+        </tr>
+        <tr class="table-head" *ngFor="let event of events">
+            <td class="col-1"><button type="button" class="btn btn-link"
+                    (click)="navigateToProfile(event.id)">{{event.name}}</button>
+            </td>
+            <td class="col-des">{{event.description}}</td>
+            <td class="center-align"
+                [facetsAuthorization]="[superAdminPermissions.all,eventPermissions.toggleEventStatus]">
+                <label class="switch">
+                    <input type="checkbox" [checked]="event.eventStatus == 'Active' ? true : false"
+                        (click)="eventStatusUpdate($event,event)">
+                    <span class="slider round"></span>
+                </label>
+            </td>
+            <td class="center-align last">
+                <button mat-button [matMenuTriggerFor]="menu">
+                    <span class="material-icons-outlined">settings</span>
+                </button>
+                <mat-menu #menu="matMenu">
+                    <button mat-menu-item
+                        [facetsAuthorization]="[superAdminPermissions.all, passCategoryPermissions.managePassTemplate]"
+                        (click)="navigateEventPass(event.id)">Pass Customization</button>
+                    <button mat-menu-item
+                        [facetsAuthorization]="[superAdminPermissions.all, registrationCounterPermissions.view, passCategoryPermissions.viewPassRate, passCategoryPermissions.view, pavilionPermissions.view]"
+                        (click)="navigateToRegistrationSettings(event.id)">Registration Settings</button>
+                </mat-menu>
+            </td>
+        </tr>
+    </table>
+    <facets-no-records [items]="events"></facets-no-records>
+    <div class="page-footer">
+        <mat-paginator [length]="searchModel.totalRecords" [pageSize]="searchModel.pageSize"
+            (page)="pageChanged($event)" [pageSizeOptions]="pageSizeOptions" aria-label="Select page"
+            [showFirstLastButtons]="true">
+        </mat-paginator>
+    </div>
+</section>

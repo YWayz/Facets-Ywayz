@@ -1,0 +1,76 @@
+<header>
+    <h3>Visitor</h3>
+</header>
+<facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+<section class="container">
+    <div class="grid-search">
+        <div class="search-wrapper">
+            <span class="material-icons-round">search</span>
+            <input class="search-input" type="text"
+                placeholder="Search by First Name, Last Name, NIC Number,Reference No or Passport Number and Mobile Number."
+                [(ngModel)]="searchModel.searchTerm">
+            <button class="btn-search" mat-icon-button (click)="clearSearchTerm()"
+                *ngIf="searchModel.searchTerm.length > 0">
+                <span class="material-icons-round">close</span>
+            </button>
+        </div>
+        <button type="button" class="btn btn-primary" (click)="search()">Search</button>
+        <button type="button" class="btn btn-outline-primary" (click)="reset()">Reset</button>
+        <button type="button" class="btn btn-primary" (click)="showFilterSection()">Filter</button>
+    </div>
+
+    <form [formGroup]="visitorForm">
+        <div class="card-filter mt-4" *ngIf="isFilterShow">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <label>Select Country</label>
+                        <input type="text" placeholder="Select country" aria-label="Select country"
+                            class="form-control w-100" formControlName="countryId" [matAutocomplete]="auto">
+                        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+                            <mat-option *ngFor="let option of filteredOptions | async" [value]="option.value">
+                                {{option.value}}
+                            </mat-option>
+                        </mat-autocomplete>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <label>Status</label>
+                        <mat-select class="form-control" placeholder="Choose a visitor status"
+                            formControlName="visitorStatus">
+                            <mat-option value="active">Active</mat-option>
+                            <mat-option value="blackListed">BlackListed</mat-option>
+                        </mat-select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <table class="table mt-4">
+        <tr class="table-head">
+            <th>Full Name</th>
+            <th>NIC/Passport No.</th>
+            <th>Mobile No.</th>
+            <th>Country</th>
+            <th class="center-align last">Status</th>
+        </tr>
+        <tr class="table-head" *ngFor="let visitor of registeredVisitors">
+            <td><button type="button" class="btn btn-link" (click)="navigateToVisitorProfile(visitor.visitorId, visitor.id)">{{ visitor.firstame + ' ' + visitor.lastame }}</button></td>
+            <td>{{ (visitor.nicNumber == null || visitor.nicNumber == undefined) ? visitor.passportNumber :
+                visitor.nicNumber }}</td>
+            <td>{{ visitor.mobileNumber }}</td>
+            <td>{{ visitor.countryName }}</td>
+            <td class="center-align last">
+                <div [ngClass]="getVisitorStatusClass(visitor.visitorStatus)">
+                    {{ visitor.visitorStatus }}
+                </div>
+            </td>
+        </tr>
+    </table>
+    <facets-no-records [items]="registeredVisitors"></facets-no-records>
+    <div class="page-footer">
+        <mat-paginator [length]="searchModel.totalRecords" [pageSize]="searchModel.pageSize"
+            (page)="pageChanged($event)" [pageSizeOptions]="pageSizeOptions" aria-label="Select page"
+            [showFirstLastButtons]="true">
+        </mat-paginator>
+    </div>
+</section>

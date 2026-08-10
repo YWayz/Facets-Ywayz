@@ -1,0 +1,20 @@
+.form {
+	display: inline-block !important;
+
+	.form__input {
+		display: block !important;
+	}
+}
+
+.modal-content{
+	height: 90vh !important;
+	// overflow: scroll !important;
+	z-index: 1 !important;
+	position: relative !important;
+  }
+  
+  .modal-body{
+	height: 100vh !important;
+	overflow-y:scroll;
+    overflow-x:hidden;
+  }

@@ -1,0 +1,117 @@
+<facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+<div class="dialog-head">
+    <div class="title" *ngIf="dialogData.data.isEdit">Update Pavilion</div>
+    <div class="title" *ngIf="!dialogData.data.isEdit">Add Pavilion</div>
+    <button class="btn btn-outline-primary-close" mat-icon-button (click)="discard()"><span
+            class="material-icons-round">close</span>
+    </button>
+</div>
+
+<mat-dialog-content class="mat-typography">
+    <form [formGroup]="pavilionForm">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="form-group w-100">
+                    <label>Pavilion Name</label>
+                    <input class="form-control" formControlName="name">
+                </div>
+                <div class="danger" *ngIf="validationModel.displayMessage.name">
+                    {{validationModel.displayMessage.name}}
+                </div>
+            </div>
+            <div class="action-footer mt-4" [hidden]="!dialogData.data.isEdit">
+                <button *ngIf="dialogData.data.isEdit" type="button" class="btn btn-primary" (click)="update()">Update</button>
+            </div>
+        </div>
+        
+        <div *ngIf="isPavilionCreated">
+            <div class="row mt-4">
+                <div class="card-grey">
+                    <label>Session Dates</label>
+                    <p>Please select the date you want to add the Session</p>
+                    <div class="d-flex">
+                        <div class="date-card" [ngClass]="eventDate.isSelected ? 'date-card' :'date-card-not'"
+                            *ngFor="let eventDate of eventDates" (click)="selectEventDate(eventDate.key)">
+                            <div class="date">{{eventDate.value | date: 'dd' }}</div>
+                            <div class="month">{{eventDate.value | date: 'MMM' }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="main-time">
+                    <div class="d-block">
+                        <label class="ses-dec">Session Start Time</label>
+                        <timepicker [disabled]="isDisabled" [showMeridian]="false" formControlName="startTime"></timepicker>
+                    </div>
+                    <div class="d-block">
+                        <label class="ses-dec">Session End Time</label>
+                        <timepicker [disabled]="isDisabled" [showMeridian]="false" formControlName="endTime"></timepicker>
+                    </div>
+                    <div class="d-block">
+                        <div class="form-group w-10">
+                            <label>Allowed Visitor Count</label>
+                            <input class="form-control w-10" type="number" min="0"
+                                formControlName="allowedVisitorCount">
+                        </div>
+                        <div class="danger" *ngIf="validationModel.displayMessage.allowedVisitorCount">
+                            {{validationModel.displayMessage.allowedVisitorCount}}
+                        </div>
+                    </div>
+                    <div class="d-block mt-4">
+                        <button type="button" class="btn btn-primary" [hidden]="isAllowedToEdit"
+                            [facetsAuthorization]="[superAdminPermissions.all, pavilionPermissions.createPavilionSession]"
+                            [disabled]="disableAddSessionButton" (click)="addSession()">+Add Session</button>
+                        <button type="button" class="btn btn-primary mr-1" [hidden]="!isAllowedToEdit"
+                            [facetsAuthorization]="[superAdminPermissions.all, pavilionPermissions.editPavilionSession]"
+                            (click)="edit()">Update Session</button>
+                        <button type="button" class="btn btn-primary" [hidden]="!isAllowedToEdit"
+                            [facetsAuthorization]="[superAdminPermissions.all, pavilionPermissions.editPavilionSession]"
+                            (click)="cancelEdit()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div *ngIf="isPavilionCreated" class="row mt-4" [facetsAuthorization]="[superAdminPermissions.all, pavilionPermissions.viewPavilionSession]">
+        <label>Added Sessions</label>
+        <facets-no-records [items]="filteredPavilionSessionModels"></facets-no-records>
+
+        <div class="ses-box">
+            <div *ngFor="let pavilionSessionModel of filteredPavilionSessionModels; let i = index">
+                <div class="month-new m-2 p-2">
+                    <div class="pav-top">
+                        <h5>Session </h5>
+                       <div class="new-pav">
+                        <button mat-button class="icon-btn-SC" (click)="isAllowToEdit(pavilionSessionModel.id)" [facetsAuthorization]="[superAdminPermissions.all, pavilionPermissions.editPavilionSession]">
+                            <span class="material-icons-outlined">edit</span>
+                        </button>
+                        <button [hidden]="isAllowedToEdit" class="btn-search btn-close-image" [facetsAuthorization]="[superAdminPermissions.all, pavilionPermissions.deletePavilionSession]" mat-icon-button
+                            (click)="remove(pavilionSessionModel.id);">
+                            <span class="material-icons-round close-icon">close</span>
+                        </button>
+                       </div>
+                    </div>
+                    <div class="pav-bot">
+                        
+                        <div class="pav-right">
+                            <div class="date-SC">{{ pavilionSessionModel.eventDate }} </div>
+                            <div class="date-SC">{{ pavilionSessionModel.startTime | date: 'hh:mm a' }} -
+                                {{pavilionSessionModel.endTime | date: 'hh:mm a' }}
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="action-footer mt-4" [hidden]="isPavilionCreated">
+        <button type="button" class="btn btn-light mr-2" (click)="discard()">Discard</button>
+        <button type="button" *ngIf="!dialogData.data.isEdit" class="btn btn-primary" (click)="createPavilion()">Add</button>
+    </div>
+
+</mat-dialog-content>

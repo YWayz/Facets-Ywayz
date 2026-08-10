@@ -1,0 +1,10 @@
+<facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+<section class="container">
+    <facets-attachment-nic-passport [isUpdated]="sharedService.isUpdateAttachment" [nicFileModels]="nicFileModels" [visitorId]="visitorId" [fileDatas]="nicFileDatas" (fileEmitter)="getNICFiles($event)"></facets-attachment-nic-passport>
+    <facets-attachment-other [isUpdated]="sharedService.isUpdateAttachment" [otherFileModels]="otherFileModels" [visitorId]="visitorId" [fileDatas]="otherFileDatas" (fileEmitter)="getOtherFiles($event)"></facets-attachment-other>
+
+    <div class="action-footer mt-4">
+        <button type="button" class="btn btn-light mr-2" (click)="back()">Back</button>
+        <button type="button" class="btn btn-primary" (click)="saveAttachment()">Next</button> 
+    </div> 
+</section>

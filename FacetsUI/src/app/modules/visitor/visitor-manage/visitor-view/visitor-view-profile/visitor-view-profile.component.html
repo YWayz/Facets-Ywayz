@@ -1,0 +1,212 @@
+<facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="info-card">
+                <div class="card-h container-fluid">
+                    <div class="sub-head">Personal Information</div>
+                    <button type="button" class="btn btn-primary" *ngIf="!isEdit" (click)="isEdit = true;"
+                        [facetsAuthorization]="[visitorRegistrationPermissions.onSiteUpdate]">Edit</button>
+                </div>
+                <hr>
+                <form [formGroup]="visitorForm">
+                    <div class="card-b">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-lg-8 col-md-8 col-sm-12">
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-6 col-sm-12" *ngIf="!isEdit">
+                                            <div class="form-group w-100">
+                                                <label>NIC/Passport No.</label>
+                                                <div class="inp mt-1">{{visitorModel.passportNumber === null ?
+                                                    visitorModel.nicNumber : visitorModel.passportNumber}}</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12" *ngIf="isEdit">
+                                            <div class="form-group w-100">
+                                                <label>NIC/Passport No. </label><span class="danger-color">*</span>
+                                                <input class="form-control" placeholder="Ex. 1997289555565"
+                                                    formControlName="nicPassportNumber">
+                                            </div>
+                                            <div class="danger"
+                                                *ngIf="validationModel.displayMessage.nicPassportNumber">
+                                                {{validationModel.displayMessage.nicPassportNumber}}
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12" *ngIf="!isEdit">
+                                            <div class="form-group w-100">
+                                                <label>Identity Type</label>
+                                                <div class="inp mt-1">{{visitorModel.visitorIdentityType}}</div>
+                                            </div>
+                                        </div>
+                                        <div class="col" *ngIf="isEdit">
+                                            <label class="mr-2">
+                                                <input class="mr-1" type="radio" formControlName="visitorIdentityType"
+                                                    [value]="'NIC'" checked>NIC
+                                            </label>
+                                            <label>
+                                                <input class="mr-1" type="radio" formControlName="visitorIdentityType"
+                                                    [value]="'Passport'">Passport
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-6 col-sm-12" *ngIf="!isEdit">
+                                            <div class="form-group w-100">
+                                                <label>First Name</label>
+                                                <div class="inp mt-1">{{visitorModel.firstName}}</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12" *ngIf="isEdit">
+                                            <div class="form-group w-100">
+                                                <label>First Name </label><span class="danger-color">*</span>
+                                                <input class="form-control" placeholder="Ex. James Fin"
+                                                    formControlName="firstName">
+                                            </div>
+                                            <div class="danger" *ngIf="validationModel.displayMessage.firstName">
+                                                {{validationModel.displayMessage.firstName}}
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12" *ngIf="!isEdit">
+                                            <div class="form-group w-100">
+                                                <label>Last Name</label>
+                                                <div class="inp mt-1">{{visitorModel.lastName}}</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12" *ngIf="isEdit">
+                                            <div class="form-group w-100">
+                                                <label>Last Name </label><span class="danger-color">*</span>
+                                                <input class="form-control" placeholder="Ex. James Fin"
+                                                    formControlName="lastName">
+                                            </div>
+                                            <div class="danger" *ngIf="validationModel.displayMessage.lastName">
+                                                {{validationModel.displayMessage.lastName}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-lg-6 col-md-6 col-sm-12" *ngIf="!isEdit">
+                                            <div class="form-group w-100">
+                                                <label>Email</label>
+                                                <div class="inp mt-1 email">{{visitorModel.email}}</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12" *ngIf="isEdit">
+                                            <div class="form-group w-100">
+                                                <label>Email</label>
+                                                <input class="form-control " placeholder="Ex. email@email.com"
+                                                    formControlName="email">
+                                                <div class="danger" *ngIf="validationModel.displayMessage.email">
+                                                    {{validationModel.displayMessage.email}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12" *ngIf="!isEdit">
+                                            <div class="form-group w-100">
+                                                <label>Mobile No.</label>
+                                                <div class="inp mt-1">{{visitorModel.mobileNumber}}</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12" *ngIf="isEdit">
+                                            <div class="form-group w-100">
+                                                <label>Mobile No. </label><span class="danger-color">*</span>
+                                                <input class="form-control" placeholder="Ex. +94773060489"
+                                                    formControlName="mobileNumber">
+                                                <div class="danger" *ngIf="validationModel.displayMessage.mobileNumber">
+                                                    {{validationModel.displayMessage.mobileNumber}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-lg-6 col-md-6 col-sm-12" *ngIf="!isEdit">
+                                            <div class="form-group w-100">
+                                                <label>Country</label>
+                                                <div class="inp mt-1">{{visitorModel.countryName }} </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12" *ngIf="isEdit">
+                                            <label>Select Country </label><span class="danger-color">*</span>
+                                            <input type="text" placeholder="Select country" aria-label="Select country"
+                                                class="form-control w-100" formControlName="countryId"
+                                                [matAutocomplete]="auto">
+                                            <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+                                                <mat-option *ngFor="let option of filteredOptions | async"
+                                                    [value]="option.value">
+                                                    {{option.value}}
+                                                </mat-option>
+                                            </mat-autocomplete>
+                                            <div class="danger" *ngIf="validationModel.displayMessage.countryId">
+                                                {{validationModel.displayMessage.countryId}}
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12" *ngIf="!isEdit">
+                                            <div class="form-group w-100">
+                                                <label>Company Name</label>
+                                                <div class="inp mt-1">{{visitorModel.companyName}}</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12" *ngIf="isEdit">
+                                            <div class="form-group w-100">
+                                                <label>Company Name</label>
+                                                <input class="form-control" placeholder="Ex. Inexis Consulting"
+                                                    formControlName="companyName">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group w-100" *ngIf="!isEdit">
+                                            <label>Address</label>
+                                            <div class="inp mt-1">{{ (visitorModel.address != null ||
+                                                visitorModel.address != undefined) ? visitorModel.address.address : ''
+                                                }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="col" formGroupName="address" *ngIf="isEdit">
+                                        <div class="form-group w-100">
+                                            <label>Address</label>
+                                            <input class="form-control" placeholder="Ex. 45/55, Conway Road, Nairobi, Kenya"
+                                                formControlName="address">
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-12" *ngIf="!isEdit">
+                                    <div class="upload-card">
+                                        <div class="upload-input-view">
+                                            <img *ngIf="!visitorModel.imageUrl"
+                                                src="../../../../assets/images/no-image.png">
+                                            <img *ngIf="visitorModel.imageUrl" [src]="visitorModel.imageUrl"
+                                                height="238px">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-5 col-sm-12" *ngIf="isEdit">
+                                    <div class="upload-card">
+                                        <facets-image-attachment-capture (getfiles)="getFiles($event)"
+                                            [imagePath]="visitorModel.imageUrl"></facets-image-attachment-capture>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="action-footer mt-4" *ngIf="isEdit">
+                <button type="button" class="btn btn-light" *ngIf="isEdit" (click)="isEdit = false;">Discard</button>
+                <button type="button" class="btn btn-primary" *ngIf="isEdit" (click)="updateVisitor()">Update</button>
+            </div>
+            <div class="action-footer-center mt-4" *ngIf="!isEdit">
+                <button type="button" class="btn btn-primary-red-bor w-b mt-3"
+                    *ngIf="!isEdit && visitorModel.visitorStatus == 'Active'" (click)="blackListed()"
+                    [facetsAuthorization]="[visitorPermissions.blackList]">Blacklist</button>
+                <button type="button" class="btn btn-primary-red w-b mt-3"
+                    *ngIf="!isEdit && visitorModel.visitorStatus == 'BlackListed'" (click)="removeFromBlackList()"
+                    [facetsAuthorization]="[visitorPermissions.blackList]">Remove from Blacklist</button>
+                <button type="button" class="btn btn-light w-b" *ngIf="!isEdit" (click)="cancelRegistration()"
+                    [facetsAuthorization]="[visitorRegistrationPermissions.cancelRegistration]">Cancel
+                    Registration</button>
+            </div>
+        </div>
+    </div>
+</div>

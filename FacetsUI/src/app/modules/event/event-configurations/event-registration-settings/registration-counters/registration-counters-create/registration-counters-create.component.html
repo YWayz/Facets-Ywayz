@@ -1,0 +1,59 @@
+<facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+<div class="dialog-head">
+    <div class="title" *ngIf="dialogData.data.isEdit">Update Counter</div>
+    <div class="title"  *ngIf="!dialogData.data.isEdit">Add Counter</div>
+    <button class="btn btn-outline-primary-close" mat-icon-button (click)="discard()"><span
+        class="material-icons-round">close</span>
+    </button>
+</div>
+
+<mat-dialog-content class="mat-typography">
+        <form [formGroup]="registrationCounterForm">
+            <div class="row mt-2 mb-2">
+                <label>Please choose counter type</label>
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="form-group w-100">
+                        <label class="mr-2">
+                            <input class="mr-1" type="radio" name="counterType" formControlName="counterType"
+                                [value]="'RegistrationAndPayment'">Registration And Payment Counter
+                        </label>
+                        <label class="mr-2">
+                            <input class="mr-1" type="radio" name="counterType" formControlName="counterType"
+                                [value]="'RegistrationOnly'" checked>Registration Counter
+                        </label>
+                        <label class="mr-2">
+                            <input class="mr-1" type="radio" name="counterType" formControlName="counterType"
+                                [value]="'PaymentOnly'">Payment Counter
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+            <div class="row mt-2">
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="form-group w-100">
+                        <label>Counter</label>
+                        <input class="form-control" formControlName="name">
+                    </div>
+                    <div class="danger" *ngIf="validationModel.displayMessage.name">
+                        {{validationModel.displayMessage.name}}
+                    </div>
+                </div> 
+            </div>
+            <div class="row mt-4">
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="form-group w-100">
+                        <label>Description</label>
+                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"
+                            formControlName="description"></textarea>
+                    </div>
+                </div>
+            </div>            
+        </form>
+        <div class="action-footer mt-4">
+            <button type="button" class="btn btn-light mr-2" (click)="discard()">Discard</button>
+            <button type="button" *ngIf="!dialogData.data.isEdit" class="btn btn-primary" (click)="create()">Save</button>
+            <button *ngIf="dialogData.data.isEdit" type="button" class="btn btn-primary" (click)="update()">Update</button>
+        </div>
+</mat-dialog-content>

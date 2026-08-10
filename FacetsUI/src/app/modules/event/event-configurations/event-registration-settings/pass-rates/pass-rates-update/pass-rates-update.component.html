@@ -1,0 +1,126 @@
+<facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+<div class="dialog-head">
+    <div class="title">Chargable Rates for {{ dialogData.data.passCategoryName }}</div>
+    <button class="btn" mat-icon-button (click)="discard()"><span class="material-icons-round">close</span>
+    </button>
+</div>
+
+<mat-dialog-content class="mat-typography">
+    <form [formGroup]="passRatesForm">
+        <div class="sub-head">Select the Pass Rate type</div>
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <label class="mr-2">
+                    <input class="mr-1" type="radio" name="rateType" (change)="changeSearchValue()" formControlName="rateType"
+                        [value]="'PerDayRate'" checked>Per Day Rate
+                </label>
+                <label>
+                    <input class="mr-1" type="radio" name="rateType" (change)="changeSearchValue()" formControlName="rateType"
+                        [value]="'FlatRate'">Flat Rate
+                </label>
+               
+            </div>
+        </div>
+
+        
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="form-group w-100">
+                    <label class="rate-header">Standard Rate LKR</label>
+                    <input class="form-control" formControlName="rate" type="text" (keyup)="setValidations()"
+                        facetsTwoDigitDecimalNumber>
+                </div>
+                <div class="danger" *ngIf="validationModel.displayMessage.rate">
+                    {{validationModel.displayMessage.rate}}
+                </div>
+            </div>
+        </div>
+
+        <div class="sub-head-dis">Discounted Rate</div>
+        <div class="row mt-2">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group0">
+                            <div class="d-flex-reg align-items-center">
+                                <div class="form-group">
+                                    <label class="switch mr-2">
+                                        <input type="checkbox" formControlName="applyEarlyRegistrationDiscountedRate"
+                                            (change)="applyEarlyRegistrationDiscountedRateChanged($event)">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+                                <label>Early registration discount</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group">
+                            <mat-form-field>
+                                <input matInput [matDatepicker]="picker" [min]="minDate" [max]="maxDate"
+                                    formControlName="earlyRegistrationDiscountedRateValidUntil" readonly>
+                                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                <mat-datepicker #picker
+                                    [disabled]="!applyEarlyRegistrationDiscountedRate"></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                        <div class="danger"
+                            *ngIf="validationModel.displayMessage.earlyRegistrationDiscountedRateValidUntil">
+                            {{validationModel.displayMessage.earlyRegistrationDiscountedRateValidUntil}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-2">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="form-group0">
+                    <div class="d-flex-reg align-items-center">
+                        <div class="form-group">
+                            <label class="switch mr-2">
+                                <input type="checkbox" formControlName="applyOnlineRegistrationDiscountedRate"
+                                    (change)="applyOnlineRegistrationDiscountedRateChanged($event)">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <label>Online registration discount</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-2" *ngIf="!applyFlatRate">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="form-group0">
+                    <div class="d-flex-reg align-items-center">
+                        <div class="form-group">
+                            <label class="switch mr-2">
+                                <input type="checkbox" formControlName="applyEntireEventDiscountedRate"
+                                    (change)="applyEntireEventDiscountedRateChanged($event)">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <label>All-Day pass discount</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="form-group w-100">
+                    <label>Discounted rate LKR</label>
+                    <input class="form-control" formControlName="discountedRate" type="text"
+                        facetsTwoDigitDecimalNumber>
+                </div>
+                <div class="danger" *ngIf="validationModel.displayMessage.discountedRate">
+                    {{validationModel.displayMessage.discountedRate}}
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="action-footer mt-4">
+        <button type="button" class="btn btn-light mr-2" (click)="discard()">Discard</button>
+        <button type="button" class="btn btn-primary" (click)="update()">Update</button>
+    </div>
+</mat-dialog-content>

@@ -1,0 +1,73 @@
+<facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+<section class="container">
+    <!-- <div class="grid-search">
+        <div class="search-wrapper">
+            <span class="material-icons-round" [facetsAuthorization]="[superAdminPermissions.all, rolePermissions.view]">search</span>
+            <input class="search-input" type="text" placeholder="Search by Role Name."
+                [(ngModel)]="searchModel.searchTerm" (keyup)="search()">
+            <button class="btn-search" mat-icon-button (click)="clearSearchTerm()">
+                <span class="material-icons-round">close</span>
+            </button>
+        </div>
+        <button type="button" class="btn btn-primary" (click)="viewCreateRole()" [facetsAuthorization]="[superAdminPermissions.all, rolePermissions.create]">+ User Role</button>
+    </div> -->
+
+    <div class="grid-search">
+        <div class="search-wrapper">
+            <span class="material-icons-round">search</span>
+            <input class="search-input" type="text"
+                placeholder="Search by Role Name."
+                [(ngModel)]="searchModel.searchTerm" (keyup)="search()">
+            <button class="btn-search" mat-icon-button (click)="clearSearchTerm()"
+                *ngIf="searchModel.searchTerm.length > 0">
+                <span class="material-icons-round">close</span>
+            </button>
+        </div>
+        <button type="button" class="btn btn-primary" (click)="viewCreateRole()" [facetsAuthorization]="[superAdminPermissions.all, rolePermissions.create]">+ User Role</button>
+   
+ </div>
+    <div class="wrapper-card mt-4">
+        <div class="cards_wrap">
+            <div class="card_item" *ngFor="let userRole of userRoles">
+                <div class="card_inner">
+                    <div class="card-sm-h">
+                        <div class="wrap-text username">{{ userRole.roleName }}</div>
+                        <button class="btn" mat-icon-button [matMenuTriggerFor]="edit" [facetsAuthorization]="[superAdminPermissions.all, rolePermissions.update, rolePermissions.delete]">
+                            <mat-icon>more_vert</mat-icon>
+                        </button>
+                        <mat-menu #edit="matMenu">
+                            <button mat-menu-item [facetsAuthorization]="[superAdminPermissions.all, rolePermissions.update, rolePermissions.updateRoleClaim]" (click)="editRole(userRole.roleId)">Edit</button>
+                            <button mat-menu-item [facetsAuthorization]="[superAdminPermissions.all, rolePermissions.delete]" (click)="deleteRole(userRole.roleId)">Delete</button>
+                        </mat-menu>
+                    </div>
+                    <div class="card-sm-b" (click)="viewPermission(userRole)">
+                        <a class="role link" [facetsAuthorization]="[superAdminPermissions.all, rolePermissions.updateRoleClaim, rolePermissions.view]">View Permissions</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <facets-no-records [items]="userRoles"></facets-no-records>
+    </div>
+</section>
+
+<div class="modal" tabindex="-1" role="dialog" [ngStyle]="{'display': displayStyle}">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ userPermissionComponent.userRole != undefined ?
+                    userPermissionComponent.userRole.roleName : '' }}</h5>
+                <button class="btn" mat-icon-button (click)="closePopup()"><span
+                        class="material-icons-round">close</span></button>
+            </div>
+            <div class="modal-body">
+                <facets-user-permission-view #userPermissionComponent [isPermissionEdit]="isEdit"></facets-user-permission-view>
+            </div>
+            <div class="modal-footer">                
+                <button type="button" class="btn btn-light mr-2" (click)="closePopup()">Discard</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<facets-role-create #userRoleCreateComponent [roleId]="roleId" [isEdit]="isEdit"
+    (rolesUpdatedList)="getUserRoles()"></facets-role-create>

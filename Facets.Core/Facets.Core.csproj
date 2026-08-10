@@ -1,0 +1,54 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="EmailTemplates\OTPEmailTemplate.html" />
+    <None Remove="EmailTemplates\PasswordResetEmailTemplate.html" />
+    <None Remove="EmailTemplates\VisitorRegistrationCancelEmailTemplate.html" />
+    <None Remove="EmailTemplates\VisitorRegistrationSuccessEmailTemplate - Copy (2).html" />
+    <None Remove="EmailTemplates\VisitorRegistrationSuccessEmailTemplate.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="EmailTemplates\OTPEmailTemplate.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EmailTemplates\PasswordResetEmailTemplate.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EmailTemplates\VisitorRegistrationCancelEmailTemplate.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EmailTemplates\VisitorRegistrationSuccessEmailTemplate.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Identity" Version="1.10.4" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="8.0.0" />
+    <PackageReference Include="Ardalis.Specification" Version="8.0.0" />
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="7.0.3" />
+    <PackageReference Include="Net.Codecrete.QrCodeGenerator" Version="2.0.5" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Facets.SharedKernal\Facets.SharedKernal.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Events\EventHandlers\" />
+  </ItemGroup>
+
+</Project>

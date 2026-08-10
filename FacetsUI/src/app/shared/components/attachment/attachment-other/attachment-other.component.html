@@ -1,0 +1,32 @@
+<div class="card-white">
+    <div class="sub-title">Other Documents</div>
+    <div class="upload-input mt-4" facetsFileDragDrop (filesChangeEmiter)="onFileChange($event)"
+        *ngIf="!isAttachmentView">
+        <span class="material-icons-outlined">file_upload</span>
+        <div>Upload Other Documents by dragging it here or
+            <input type="file" accept=".png, .jpg, .jpeg" name="file-input-other" id="file-input-other" class="file-input__input"
+                (click)="clearFiles($event)" (change)="onMultiFileChange($event)" multiple />
+            <label class="select" for="file-input-other">
+                <span>select</span>
+            </label>
+        </div>
+        <facets-multi-image-attachment-capture
+            (fileEmitter)="onFileChange($event)"></facets-multi-image-attachment-capture>
+    </div>
+    <div class="wrapper-card mt-4">
+        <div class="cards_wrap">
+            <div class="card_item" *ngFor="let file of fileDatas; let i = index">
+                <div class="card_inner">
+                    <div class="attachment">
+                        <img class="img" [src]="file.img" />
+                        <button *ngIf="!isAttachmentView" class="btn-search btn-close-image" mat-icon-button
+                            (click)="remove(i, file.name);">
+                            <span class="material-icons-round close-icon">close</span>
+                        </button>
+                    </div>
+                    <div class="text desc-center mt-2">{{ file.name }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

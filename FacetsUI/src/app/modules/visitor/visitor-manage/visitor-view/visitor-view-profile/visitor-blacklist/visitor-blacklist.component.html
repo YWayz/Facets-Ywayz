@@ -1,0 +1,43 @@
+<facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+<div class="dialog-head">
+    <div class="title">Blacklist Visitor - {{ dialogData.data.fullName }}</div>
+    <div class="title"></div>
+    <button class="btn" mat-icon-button (click)="discard()"><span
+        class="material-icons-round">close</span>
+    </button>
+</div>
+<mat-dialog-content class="mat-typography">
+    <form [formGroup]="visitorBlacklistForm">
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group">
+                    <label>Until Date</label>
+                    <mat-form-field>
+                        <input matInput [matDatepicker]="picker" formControlName="blackListUntil" readonly>
+                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                </div>
+                <div class="danger" *ngIf="validationModel.displayMessage.blackListUntil">
+                    {{validationModel.displayMessage.blackListUntil}}
+                </div>
+            </div> 
+        </div>
+        <div class="row mt-4">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="form-group w-100">
+                    <label>Description</label>
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"
+                        formControlName="reason"></textarea>
+                </div>
+                <div class="danger" *ngIf="validationModel.displayMessage.reason">
+                    {{validationModel.displayMessage.reason}}
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="action-footer mt-4">
+        <button type="button" class="btn btn-light mr-2" (click)="discard()">Discard</button>
+        <button type="button" class="btn btn-primary" (click)="update()">Confirm</button>
+    </div>
+</mat-dialog-content>

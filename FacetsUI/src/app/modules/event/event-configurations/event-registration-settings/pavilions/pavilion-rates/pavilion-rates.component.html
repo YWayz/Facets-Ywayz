@@ -1,0 +1,26 @@
+<facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+
+<div class="dialog-head">
+    <div class="title" *ngIf="dialogData.data.isEdit">Update Pavilion Rates</div>
+    <div class="title"></div>
+    <button class="btn btn-outline-primary-close" mat-icon-button (click)="discard()"><span
+        class="material-icons-round">close</span>
+    </button>
+</div>
+
+<section class="container">
+    <table class="table">
+        <tr class="table-head">
+            <th>Pass Category</th>
+            <th class="text-right">Pavilion Rate (LKR)</th>
+        </tr>
+        <tr class="table-head" *ngFor="let passCategoryRates of pavilionModel.passCategoryPavilionSettings">
+            <td class="table-first-pav">{{ passCategoryRates.passCategoryName }}</td>
+            <td><input class="form-control" [(ngModel)]="passCategoryRates.pavilionRate" type="text"
+                min="0" facetsTwoDigitDecimalNumber></td>
+            
+        </tr>
+    </table>
+    <button *ngIf="dialogData.data.isEdit" [facetsAuthorization]="[superAdminPermissions.all, pavilionPermissions.editPassPavilionRate]" type="button" class="btn btn-primary" (click)="update()">Update</button>
+    <facets-no-records [items]="pavilionModel.passCategoryPavilionSettings"></facets-no-records>
+</section>

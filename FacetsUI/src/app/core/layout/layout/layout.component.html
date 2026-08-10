@@ -1,0 +1,81 @@
+<div class="sidebar no-printme" [class.sidebar-close]="!openSidebar">
+    <div class="mainheader">
+        <div class="hamburger-menu">
+            <input type="checkbox" id="checkbox-hamburger-menu" [(ngModel)]="openSidebar" />
+            <label class="label-hamburger-menu" for="checkbox-hamburger-menu">
+                <span class="material-icons-outlined s-c">
+                    menu
+                </span>
+            </label>
+        </div>
+        <div class="main-head-lab head">Event Management</div>
+    </div>
+    <div class="sideHeader">
+        <div class="display-space">
+            <div class="head">
+                <div class="head-lab">Exhibitions</div>
+                <div class="head-input">{{activeEventName}}</div>
+            </div>
+            <div>
+                <button mat-button [matMenuTriggerFor]="menu">
+                    <span class="material-icons-outlined">unfold_more</span>
+                </button>
+                <mat-menu #menu="matMenu">
+                    <button mat-menu-item *ngFor="let event of eventKeyValues"
+                        (click)="changeEvent(event)">{{event.value}}</button>
+                </mat-menu>
+            </div>
+        </div>
+    </div>
+    <ul class="nav-links" id="nav-links">
+        <li class="main-item" *ngFor="let item of menuSidebar" #itemEl routerLinkActive="active">
+            <div *ngIf="item.sub_menu.length == 0" class="dropdown-title" [facetsAuthorization]="item.permissions">
+                <a [routerLink]="[item.link]">
+                    <i><span class='material-icons-outlined'>{{item.icon}}</span></i>
+                    <span class="link_name">{{item.link_name}}</span>
+                </a>
+            </div>
+            <div *ngIf="item.sub_menu.length > 0" class="dropdown-title" (click)="showSubmenu(itemEl)"
+                [facetsAuthorization]="item.permissions">
+                <a>
+                    <i><span class='material-icons-outlined'>{{item.icon}}</span></i>
+                    <span class="link_name">{{item.link_name}}</span>
+                </a>
+                <i class='bx bxs-chevron-down arrow'></i>
+            </div>
+            <ul class="sub-menu" [class.blank]="item.sub_menu.length == 0">
+                <li><a class="link_name">{{item.link_name}}</a></li>
+                <li *ngFor="let item_sub of item.sub_menu" routerLinkActive="sub-active"
+                    [facetsAuthorization]="item_sub.permissions">
+                    <a [routerLink]="[item_sub.link]">{{item_sub.link_name}}</a>
+                </li>
+            </ul>
+        </li>
+        <div class="sideFooter">
+            <div class="display-space">
+                <div class="mr d-n">
+                    <span class="material-icons-outlined profile">
+                        account_circle
+                    </span>
+                </div>
+                <div class="text-wrap d-n">
+                    <div class="head-input">{{ firstName + ' ' + lastName}}</div>
+                    <div class="head-lab">{{userRole}}</div>
+                </div>
+                <div>
+                    <button mat-button [matMenuTriggerFor]="profile">
+                        <span class="material-icons-outlined">more_vert</span>
+                    </button>
+                    <mat-menu #profile="matMenu">
+                        <button mat-menu-item (click)="userProfile()" [hidden]="isSuperAdmin">Profile</button>
+                        <button mat-menu-item (click)="logout()">Logout</button>
+                    </mat-menu>
+                </div>
+            </div>
+        </div>
+    </ul>
+</div>
+
+<section class="home-section">
+    <router-outlet></router-outlet>
+</section>

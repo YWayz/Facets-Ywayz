@@ -1,0 +1,128 @@
+.body{
+    background-image: url("../../../../assets/images/login-bg.svg");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+}
+.box{
+    min-height: 100vh;
+}
+.container{
+    width: 350px;
+    display: flex;
+    flex-direction: column;
+    padding: 30px 15px 0 15px;
+    
+}
+span{
+    color: #fff;
+    font-size: small;
+    display: flex;
+    justify-content: center;
+    padding: 10px 0 10px 0;
+}
+.submit{
+    border: none;
+    border-radius: 30px;
+    font-size: 15px;
+    height: 45px;
+    outline: none;
+    width: 100%;
+    color: rgb(255, 255, 255);
+    background: #0177FB;
+    cursor: pointer;
+    transition: .3s ;
+}
+.submit:hover{
+    box-shadow: 1px 5px 7px 1px rgba(0, 0, 0, 0.2);
+    background-color: #0067DB;
+}
+// .two-col{
+//     display: flex;
+//     flex-direction: row;
+//     justify-content: space-between;
+//     color: #fff;
+//     font-size: small;
+//     margin-top: 10px;
+// }
+// .one{
+//     display: flex;
+// }
+// label a{
+//     text-decoration: none;
+//     color: #fff;
+// }
+
+//input
+.wrapper{
+    width: 350px;
+}
+.wrapper .input-data{
+    height: 40px;
+    width: 100%;
+    position: relative;
+    outline: none;
+}
+.wrapper .input-data input{
+    height: 100%;
+    width: 100%;
+    border: none;
+    font-size: 16px;
+    font-weight: 300;
+    border-bottom: 2px solid silver;
+    outline: none;
+}
+.input-data input:focus ~ label,
+.input-data input:valid ~ label{
+    transform: translateY(-20px);
+    font-size: 14px;
+    font-weight: 300;
+    color: #0177FB;
+}
+.wrapper .input-data label{
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    color: grey;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    font-weight: 300;
+}
+.input-data .underline{
+    position: absolute;
+    height: 2px;
+    width: 100%;
+    bottom: 0;
+}
+.input-data .underline:before{
+    position: absolute;
+    content: "";
+    height: 100%;
+    width: 100%;
+    background: #0177FB;
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.3s ease;
+}
+.input-data input:focus ~ .underline:before,
+.input-data input:valid ~ .underline:before{
+    transform: scaleX(1);
+}
+
+.log{
+    padding-left: 13%;
+    padding-top: 1%;
+}
+
+.title-head{
+    padding: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 14px;
+}
+
+.color-blue{
+    color: #0177FB;
+    cursor: pointer;
+}

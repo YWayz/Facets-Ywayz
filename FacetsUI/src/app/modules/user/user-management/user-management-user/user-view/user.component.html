@@ -1,0 +1,51 @@
+<facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+<section class="container">
+
+    <div class="grid-search">
+        <div class="search-wrapper">
+            <span class="material-icons-round">search</span>
+            <input class="search-input" type="text"
+                placeholder="Search by First Name, Last Name, Username or Email Address."
+                [(ngModel)]="searchModel.searchTerm" (keyup)="search()">
+            <button class="btn-search" mat-icon-button (click)="clearSearchTerm()"
+                *ngIf="searchModel.searchTerm.length > 0">
+                <span class="material-icons-round">close</span>
+            </button>
+        </div>
+        <button type="button" class="btn btn-primary" [facetsAuthorization]="['all', 'role.create']" (click)="viewCreateUser()">+ User</button>
+   
+ </div>
+    <div class="wrapper-card mt-4">
+        <div class="cards_wrap">
+            <div class="card_item" *ngFor="let user of userModels">
+                <div class="card_inner">
+                    <div class="card-sm-h">
+                        <div class="wrap-text username">{{ user.firstName + ' ' + user.lastName }}</div>
+                        <button class="btn" mat-icon-button [matMenuTriggerFor]="edit" [facetsAuthorization]="['all', 'user.edit', 'user.delete']">
+                            <mat-icon>more_vert</mat-icon>
+                        </button>
+                        <mat-menu #edit="matMenu">
+                            <button mat-menu-item [facetsAuthorization]="['all', 'user.edit']" (click)="viewEditUser(user.id)">Edit</button>
+                            <button mat-menu-item [facetsAuthorization]="['all', 'user.delete']" (click)="deleteUser(user.id)">Delete</button>
+                        </mat-menu>
+                    </div>
+                    <div class="card-sm-b">
+                        <div class="wrap-text email">{{ user.email}}</div>
+                    </div>
+                    <div class="card-sm-b">
+                        <div class="role">{{ user.roles[0]}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <facets-no-records [items]="userModels"></facets-no-records>
+    <div class="page-footer">
+        <mat-paginator [length]="searchModel.totalRecords" [pageSize]="searchModel.pageSize" (page)="pageChanged($event)"
+        [pageSizeOptions]="pageSizeOptions" aria-label="Select page" [showFirstLastButtons]="true">
+        </mat-paginator> 
+    </div>
+</section>
+
+<facets-user-create (userCreationClosed)="setDisplay()" (userRolesList)="getUsers()" [isDisplay]="isDisplay"
+    [userId]="userId" [isEdit]="isEdit"></facets-user-create>

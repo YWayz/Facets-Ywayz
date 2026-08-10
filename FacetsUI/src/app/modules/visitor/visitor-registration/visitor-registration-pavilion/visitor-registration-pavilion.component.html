@@ -1,0 +1,81 @@
+<facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+<section class="container">
+    <form [formGroup]="pavilionForm">
+        <div class="card-white">
+            <div class="form-group">
+                <label>Pavilion</label>
+                <mat-select class="form-control" placeholder="Choose a pavilion" formControlName="pavilionId"
+                    (selectionChange)="onPavilionChange($event)">
+                    <mat-option *ngFor="let pavilionSummary of pavilionSummariesModel" [value]="pavilionSummary.id">{{
+                        pavilionSummary.name }}</mat-option>
+                </mat-select>
+            </div>
+
+            <div *ngIf="isSessionShow" class="pav-box mb-4">
+                <div [ngClass]="(pavilionSession.isSelected && pavilionSession.isInvoiced) ? 'date-card-session disableDiv' :pavilionSession.isSelected ? 'date-card-session' :'date-card-not'"
+                    *ngFor="let pavilionSession of pavilionSessionSummariesModel">
+                    <div (click)="checkUncheck(pavilionSession)">
+                        <!-- <div>{{pavilionSession.eventDate | date: 'dd/MM/yyyy'}}, {{pavilionSession.startTime | date:
+                            'hh:mm a'}} - {{pavilionSession.eventDate | date: 'dd/MM/yyyy'}}, {{pavilionSession.endTime
+                            | date: 'hh:mm a'}}</div> -->
+
+                            <div [ngClass]="(pavilionSession.isSelected) ? 'ses-not':'ses-nt'">
+                                <h4>Session</h4>
+                            </div>
+                           <div [ngClass]="(pavilionSession.isSelected) ? 'ses-car':'ses-card'">
+                             <div class="ses-new">{{pavilionSession.eventDate | date: 'dd/MM/yyyy'}} 
+                             </div>
+
+                                <div class="ses-new">   {{pavilionSession.startTime | date:'hh:mm a'}} - 
+                                    {{pavilionSession.endTime | date: 'hh:mm a'}}
+                                </div>
+
+
+                           </div>
+                    </div>
+                </div>
+            </div>
+
+            
+
+            <p *ngIf="isSessionShow && pavilionSessionSummariesModel.length == 0" class="mt-4">No sessions for the selected event dates</p>
+            <p *ngIf="isSessionShow && pavilionSessionSummariesModel.length > 0" class="mt-4">Selected Pavilion Sessions</p>
+            <div class="wrapper-card mt-4" *ngIf="isSessionShow">
+                <div class="cards_wrap">
+                    <div class="card_item" *ngFor="let selectedList of unInvoicedCheckedList">
+                        <div>
+                            <div>
+                                <div class="card cardLeft">
+                                    <h1>Pavilion Session</h1>
+                                    <div class="title">
+                                        <h2>{{selectedList.eventDate | date: 'dd/MM/yyyy'}} </h2>
+                                        <h2>{{selectedList.startTime | date:
+                                            'hh:mm a'}} - {{selectedList.endTime | date: 'hh:mm a'}}</h2>
+                                        <span>Pavilion</span>
+                                    </div>
+                                </div>
+
+                                <div class="card cardRight">
+                                    <div class="eye">
+                                        <span class="material-icons-outlined">
+                                            confirmation_number
+                                        </span>
+                                    </div>
+                                    <div class="number">
+                                        <h3>LKR {{ selectedList.amount | number:'1.2' }}</h3>
+                                        <span>Price</span>
+                                    </div>
+                                    <div class="barcode"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="action-footer mt-4">
+        <button type="button" class="btn btn-light mr-2" (click)="back()">Back</button>
+        <button type="button" class="btn btn-primary" (click)="savePavilion()">Proceed to payment</button>
+    </div>
+</section>

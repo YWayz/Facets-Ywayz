@@ -1,0 +1,50 @@
+<div class="header">
+    <header>
+        <h3>New Registration</h3>
+    </header>
+    <div class="progress-bar">
+
+        <ul class="list-unstyled multi-steps">
+            <li [ngClass]="{'is-active': isProfile == true}">Profile</li>
+            <li [ngClass]="{'is-active': isOtp == true}">OTP</li>
+            <li [ngClass]="{'is-active': isAttachment == true}">Attachments</li>
+            <li [ngClass]="{'is-active': isPass == true}">Pass</li>
+            <li *ngIf="isPavilionSessionExist" [ngClass]="{'is-active': isPavilion == true}">Pavilions</li>
+            <li [ngClass]="{'is-active': isPayment == true}">Payment</li>
+            <li [ngClass]="{'is-active': isRegistrationSuccess == true}">Registered</li>
+        </ul>
+    </div>
+</div>
+
+<div class="content">
+    <facets-visitor-registration-profile [nic]="nic" (sendDataForPassCategory)="setPassCategoryData($event)"
+        (isOtp)="goToOtp($event)" (isAttachment)="goToAttachment($event)"
+        *ngIf="isProfile"></facets-visitor-registration-profile>
+
+
+    <facets-visitor-registration-otp [visitorId]="visitorId" [identityNumber]="identityNumber" [model]="model"
+        (isAttachment)="goToAttachment($event)" (isProfile)="goToProfile($event)"
+        *ngIf="isOtp"></facets-visitor-registration-otp>
+
+
+    <facets-visitor-registration-attachments [visitorId]="visitorId" (isOtp)="goToOtp($event)"
+        (isProfile)="goToProfile($event)" (isPass)="goToPass($event)"
+        *ngIf="isAttachment"></facets-visitor-registration-attachments>
+
+
+    <facets-visitor-registration-pass [isPavilionSessionExist]="isPavilionSessionExist"
+        [selectedPassCategories]="selectedPassCategories" [visitorId]="visitorId"
+        (isAttachment)="goToAttachment($event)" (isPayment)="isPavilionSessionExist ? goToPavilion() : goToPayment()"
+        (sendVisitorRegistrationId)="setEventVisitorRegistrationId($event)" (isRegisterSuccess)="goToRegisterSuccess()"
+        (sendFinalAmount)="setPayment($event)" *ngIf="isPass"></facets-visitor-registration-pass>
+
+    <facets-visitor-registration-pavilion (isPass)="goToPaymentBack()" (isPayment)="goToPayment()"
+        [isPavilion]="isPavilion" [visitorId]="visitorId" *ngIf="isPavilion"></facets-visitor-registration-pavilion>
+
+    <facets-visitor-registration-payment [isPavilionSessionExist]="isPavilionSessionExist" [finalAmount]="finalAmount"
+        [visitorId]="visitorId" (isPass)="isPavilionSessionExist ? goToPavilion() : goToPaymentBack()"
+        (isPass)="isPavilionSessionExist ? goToPavilion() : goToPaymentBack()"
+        (isRegisterSuccess)="goToRegisterSuccess()" *ngIf="isPayment"></facets-visitor-registration-payment>
+
+    <facets-visitor-registration-success *ngIf="isRegistrationSuccess"></facets-visitor-registration-success>
+</div>

@@ -1,0 +1,48 @@
+<facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+<section class="container">
+    <div class="be-detail-container" [formGroup]="otpForm">
+        <div class="row mt-4">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-6">
+                <h1 class="text-center">One-Time Password</h1><br>
+                <p class="text-center mt-2 mb-4">Please enter the OTP sent to {{otpSentTo}} to verify your
+                    registration.</p>
+
+                <div class="form-group w-100 mt-4 d-flex">
+                    <input class="form-control mr-2" placeholder="Enter OTP" formControlName="code">
+                    <button type="button" class="btn btn-primary mt-1" (click)="verifyOtp()"
+                        [disabled]="isOtpVerifying"><i *ngIf="isOtpVerifying"
+                            class="spinner-border spinner-border-sm me-2"></i>Verify</button>
+                </div>
+            </div>
+            <div class="col-sm-3"></div>
+            <div class="action-footer-center mt-4">
+
+                <div class="row action-footer-center mt-3 mb-3" *ngIf="sharedService.isSriLankanNumber">
+                    <div class="col">
+                        <label class="mr-2">
+                            <input class="mr-1" type="radio" name="optradio" (change)="changeSearchValue($event)"
+                                [value]="'mobile'" checked>Mobile
+                        </label>
+                        <label>
+                            <input class="mr-1" type="radio" name="optradio" (change)="changeSearchValue($event)"
+                                [value]="'email'">Email
+                        </label>
+                    </div>
+                </div>
+
+                <p class="text-center"> Time Remaining: 
+                    {{ displayTime }}
+                </p>
+
+                <button type="button" class="btn btn-primary mt-1 mb-2" (click)="goBackHome()">Go Back</button>
+
+                <label>Didn't recieve code?
+                    <button (click)="resendOtp()" type="button" class="btn btn-link" [disabled]="disableResendOtp">                        
+                        <span>Resend OTP</span>
+                    </button>
+                </label>                
+            </div>
+        </div>
+    </div>
+</section>

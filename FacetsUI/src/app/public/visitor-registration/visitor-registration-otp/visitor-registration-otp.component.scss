@@ -1,0 +1,24 @@
+.container {
+    padding: 25px !important;
+    height: 95vh !important;
+    overflow: auto !important;
+    margin-top: 100px !important;
+}
+
+.submit{
+    border: none;
+    border-radius: 30px;
+    font-size: 15px;
+    height: 45px;
+    outline: none;
+    width: 100%;
+    color: rgb(255, 255, 255);
+    background: #0177FB;
+    cursor: pointer;
+    transition: .3s ;
+    margin-bottom: 10px;
+}
+.submit:hover{
+    box-shadow: 1px 5px 7px 1px rgba(0, 0, 0, 0.2);
+    background-color: #0067DB;
+}

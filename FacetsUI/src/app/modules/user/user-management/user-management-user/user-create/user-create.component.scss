@@ -1,0 +1,38 @@
+.example-form {
+    min-width: 150px;
+    max-width: 500px;
+    width: 100%;
+  }
+  
+  .example-full-width {
+    width: 100%;
+  }
+
+  .check--box{
+    padding: 5px 5px 5px 18px;
+}
+
+.pass-inp{
+  border: solid 1px #cdcdcd !important;
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-self: center;
+  input{
+    border: 0px !important;
+    margin-top: 0px !important;
+    padding: 0px 10px !important;
+  }
+}
+
+.modal-content{
+  height: 90vh !important;
+  overflow: auto !important;
+  z-index: 1 !important;
+  position: relative !important;
+}
+
+.modal-body{
+  height: 100vh !important;
+  overflow: auto !important;
+}

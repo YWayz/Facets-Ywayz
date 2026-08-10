@@ -1,0 +1,29 @@
+<facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+<div class="dialog-head">
+    <div class="title">Cancel Registration</div>
+    <div class="title"></div>
+    <button class="btn" mat-icon-button (click)="discard()"><span
+        class="material-icons-round">close</span>
+    </button>
+</div>
+<mat-dialog-content class="mat-typography">
+    <div class="card-white">
+        <label class="mb-2">Event Dates</label>
+        <div class="d-flex mb-4">
+            <div class="date-card" [ngStyle]="{'border': (eventDate.cancelled == true) ? 'solid 2px #800000' : (eventDate.passGeneratedAt != null) ? 'solid 2px #008000' : 'solid 2px #FFC442'}" *ngFor="let eventDate of dialogData.data.attendanceSchedules; let index = index">
+                <!-- <div *ngIf="eventDate.cancelled">Cancelled</div> -->
+                <div *ngIf="eventDate.cancelled">
+                    &nbsp;
+                </div>
+                <input type="checkbox" [hidden]="eventDate.cancelled" [checked]="eventDate.isSelected" [value]="eventDate.attendanceScheduleId"
+                    (change)="checkUncheck($event, eventDate.attendanceScheduleId)" [disabled]="eventDate.passGeneratedAt != null" />
+                <div class="date">{{eventDate.registeredEventDate | date:'dd'}}</div>
+                <div class="month" [ngStyle]="{'background-color': (eventDate.cancelled == true) ? '#800000'  : (eventDate.passGeneratedAt != null) ? '#008000' : '#FFC442', 'color': 'white'}" >{{eventDate.registeredEventDate | date:'MMM'}}</div>
+            </div>
+        </div>
+    </div>
+    <div class="action-footer mt-4">
+        <button type="button" class="btn btn-light mr-2" (click)="discard()">Discard</button>
+        <button type="button" class="btn btn-primary" *ngIf="!isAllCancelled" (click)="cancelAttendenceSchedule()">Confirm</button>
+    </div>
+</mat-dialog-content>

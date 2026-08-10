@@ -1,0 +1,33 @@
+<header>
+    <h3>Registration Settings </h3>
+    <div class="btn-al-right">
+        <button type="button" class="btn btn-primary" routerLink="/admin/event">Back</button>
+    </div>
+</header>
+<mat-tab-group>
+    <mat-tab label="Pass Category" *ngIf="!isPassCategoryHidePermission">
+        <ng-template matTabContent>
+            <facets-pass-category></facets-pass-category>
+        </ng-template>
+    </mat-tab>
+    <mat-tab label="Pass Rates" *ngIf="!isPassRateHidePermission">
+        <ng-template matTabContent>
+            <facets-pass-rates></facets-pass-rates>
+        </ng-template>
+    </mat-tab>
+    <mat-tab label="Counters" *ngIf="!isRegistrationCounterHidePermission">
+        <ng-template matTabContent>
+            <facets-registration-counters></facets-registration-counters>
+        </ng-template>
+    </mat-tab>
+    <mat-tab label="Pavilions" *ngIf="!isPavilionHidePermission">
+        <ng-template matTabContent>
+            <facets-pavilions></facets-pavilions>
+        </ng-template>
+    </mat-tab>
+    <mat-tab label="Payment">
+        <ng-template matTabContent>
+            <facets-payment-settings></facets-payment-settings>
+        </ng-template>
+    </mat-tab>
+</mat-tab-group>

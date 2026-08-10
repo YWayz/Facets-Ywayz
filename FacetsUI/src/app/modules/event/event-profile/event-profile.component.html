@@ -1,0 +1,55 @@
+<header>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a [routerLink]="'/admin/event'">View All Events</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{this.eventDetailModel.name}}</li>
+        </ol>
+    </nav>
+    <div class="btn-al-right">
+        <button type="button" class="btn btn-primary" (click)="navigateToEdit()"
+            [facetsAuthorization]="[superAdminPermissions.all,eventPermissions.edit]">Edit</button>
+    </div>
+</header>
+
+<facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+<section class="container">
+    <div class="banner">
+        <div class="container-1">
+            <div class="image">
+                <img [src]="this.eventDetailModel.logoURL">
+                <!-- <img src="../../../../assets/images/facets_logo.png"> -->
+            </div>
+            <div class="text">
+                <div class="title">{{this.eventDetailModel.name}}</div>
+                <p class="description">{{this.eventDetailModel.description}}</p>
+            </div>
+        </div>
+        <div class="card">
+            <div class="grid-1">
+                <div class="line-right">
+                    <label>Event Dates</label>
+                    <div class="all-date mt-3">
+                        <div class="date-card" *ngFor="let eventdate of eventDetailModel.eventDates">
+                            <div class="date">{{eventdate.value | date:'dd'}}</div>
+                            <div class="month">{{eventdate.value | date:'MMM'}}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="visitor-date">
+                    <label>Visitor Registration Date</label>
+                    <div class="grid-3 mt-3">
+                        <div class="date-card">
+                            <div class="date">{{eventDetailModel.visitorRegistrationStartDate | date:'dd'}}</div>
+                            <div class="month">{{eventDetailModel.visitorRegistrationStartDate | date:'MMM'}}</div>
+                        </div>
+                        <div class="to">To</div>
+                        <div class="date-card">
+                            <div class="date">{{eventDetailModel.visitorRegistrationEndDate | date:'dd'}}</div>
+                            <div class="month">{{eventDetailModel.visitorRegistrationEndDate | date:'MMM'}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

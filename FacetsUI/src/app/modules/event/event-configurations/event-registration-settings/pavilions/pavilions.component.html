@@ -1,0 +1,50 @@
+<facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+<section class="container">
+    <div class="d-flex justify-content-end">
+        <button type="button" class="btn btn-primary" (click)="openCreatePopup()"
+            [facetsAuthorization]="[superAdminPermissions.all, pavilionPermissions.create]">+ Pavilion</button>
+    </div>
+
+    <table class="table mt-4" [facetsAuthorization]="[superAdminPermissions.all, pavilionPermissions.view]">
+        <tr class="table-head">
+            <th>Pavilion Name</th>
+            <th>Number of Sessions</th>
+            <th [facetsAuthorization]="[superAdminPermissions.all, pavilionPermissions.togglePavilionStatus]">Active/ Inactive</th>
+            <th>Pavilion Rate</th>
+            <th class="last">Action</th>
+        </tr>
+        <tr class="table-head" *ngFor="let pavilion of pavilionModels">
+            <td>{{ pavilion.name }}</td>
+            <td>{{ pavilion.numberOfSession }}</td>
+            <td class="last" [facetsAuthorization]="[superAdminPermissions.all, pavilionPermissions.togglePavilionStatus]">
+                <input class="checkbox" id="{{pavilion.id}}" [checked]="pavilion.status == 'Active' ? true : false"
+                    type="checkbox"
+                    (click)="updatePavilion($event, pavilion)" />
+                <label for="{{pavilion.id}}" class="checkbox-label">
+                    <span class="on">Active</span>
+                    <span class="off">Inactive</span>
+                </label>
+            </td>
+            <td><button type="button" class="btn btn-primary text-white" [facetsAuthorization]="[superAdminPermissions.all, pavilionPermissions.rateView]" (click)="openPavilionRatePopup(pavilion.id)">Set Rates</button></td>
+            <td class="last">
+                <button mat-button class="icon-btn mr-2"
+                    [facetsAuthorization]="[superAdminPermissions.all, pavilionPermissions.edit]"
+                    (click)="openCreatePopup(pavilion.id)">
+                    <span class="material-icons-outlined">edit</span>
+                </button>
+                <button mat-button class="icon-btn-delete"
+                    [facetsAuthorization]="[superAdminPermissions.all, pavilionPermissions.delete]"
+                    (click)="deletePavilion(pavilion.id)">
+                    <span class="material-icons-outlined c-white">delete</span>
+                </button>
+            </td>
+        </tr>
+    </table>
+    <facets-no-records [items]="pavilionModels"></facets-no-records>
+    <div class="page-footer">
+        <mat-paginator [length]="searchModel.totalRecords" [pageSize]="searchModel.pageSize"
+            (page)="pageChanged($event)" [pageSizeOptions]="pageSizeOptions" aria-label="Select page"
+            [showFirstLastButtons]="true">
+        </mat-paginator>
+    </div>
+</section>

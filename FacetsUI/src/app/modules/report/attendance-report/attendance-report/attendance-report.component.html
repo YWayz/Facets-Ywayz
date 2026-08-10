@@ -1,0 +1,147 @@
+<header>
+    <h3>Attendance Report</h3>
+    <div class="btn-al-right">
+        <button type="button" class="btn btn-primary" *ngIf="!showFilter"
+            (click)="showFilter = !showFilter">Filter</button>
+
+        <button type="button" class="btn btn-link d-flex justify-content-center align-items-center" (click)="export()">
+            <span class="material-icons-outlined mr-1">file_download</span>
+            <span>Export</span>
+        </button>
+    </div>
+</header>
+
+<section class="container">
+    <section>
+        <div class="card-grey">
+            <label>Event Dates</label>
+            <div class="scrip">
+                To generate a report, please choose the dates below.
+            </div>
+            <div class="d-flex mt-3">
+                <div [ngClass]="isAllSelected ? 'date-card' :'date-card-not'" (click)="selectAll()">
+                    <div class="date">All</div>
+                    <div class="month">&nbsp;</div>
+                </div>
+                <div [ngClass]="date.isSelected ? 'date-card' :'date-card-not'" *ngFor="let date of eventDates">
+                    <div (click)="changeSelection(date)">
+                        <div class="date">{{date.value | date:'dd'}}</div>
+                        <div class="month">{{date.value | date:'MMM'}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="card-filter mt-4" *ngIf="showFilter">
+        <div class="filter">
+            <mat-form-field>
+                <mat-label>Select Country</mat-label>
+                <mat-select [(ngModel)]="attendanceReportFilterModel.visitorCountryIds" multiple>
+                    <mat-option *ngFor="let country of countries" [value]="country.key">{{country.value}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field>
+                <mat-label>Select Pass Category</mat-label>
+                <mat-select [(ngModel)]="attendanceReportFilterModel.passCategoryIds" multiple>
+                    <mat-option *ngFor="let pass of passCategories" [value]="pass.key">{{pass.value}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field>
+                <mat-label>Select Visitor Status</mat-label>
+                <mat-select [(ngModel)]="attendanceReportFilterModel.visitorStatuses" multiple>
+                    <mat-option *ngFor="let status of visitorStatuses" [value]="status">{{status}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+
+            <div>
+                <div class="col">
+                    <label class="mr-2">
+                        <input class="mr-1" type="radio" name="optradio-pass" [(ngModel)]="selectedReportFilter"
+                            [value]="'specific'" (change)="changeFilter()" checked>Specific
+                    </label>
+                    <label>
+                        <input class="mr-1" type="radio" name="optradio-pass" [(ngModel)]="selectedReportFilter"
+                            [value]="'range'" (change)="changeFilter()">Date Range
+                    </label>
+                </div>
+                <div class="form-single-date" *ngIf="isSpecific">
+                    <input class="form-icon__input" placeholder=" " [matDatepicker]="specificDatePicker"
+                    [(ngModel)]="attendanceReportFilterModel.visitorEventRegistrationSpecificDate">
+                    <mat-datepicker-toggle [for]="specificDatePicker" class="date-time">
+                    </mat-datepicker-toggle>
+                    <mat-datepicker #specificDatePicker></mat-datepicker>
+                    <label class="form-icon__label">Specific Date<span class="danger-color"></span></label>
+                </div>
+
+                <div class="form-date w-100" *ngIf="!isSpecific">
+                    <mat-date-range-input [rangePicker]="visitorRegistrationDatePicker">
+                        <input matStartDate [(ngModel)]="attendanceReportFilterModel.visitorEventRegistrationFromDate"
+                            placeholder="Start date">
+                        <input matEndDate [(ngModel)]="attendanceReportFilterModel.visitorEventRegistrationToDate"
+                            placeholder="End date">
+                    </mat-date-range-input>
+                    <mat-datepicker-toggle [for]="visitorRegistrationDatePicker" class="date-time">
+                    </mat-datepicker-toggle>
+                    <mat-date-range-picker #visitorRegistrationDatePicker>
+                        <mat-date-range-picker-actions>
+                            <button mat-button matDateRangePickerCancel (click)="cancel()">Cancel</button>
+                            <button mat-raised-button color="primary" matDateRangePickerApply
+                                (click)="getVisitorDetails()">Apply</button>
+                        </mat-date-range-picker-actions>
+                    </mat-date-range-picker>
+                </div>
+            </div>
+            <div></div>
+            <div class="actions">
+                <button type="button" class="btn btn-link d-flex justify-content-center align-items-center"
+                *ngIf="showFilter" (click)="cancelFilter()">Cancel
+                Filter</button>
+                <button type="button" class="btn btn-primary" (click)="search()">search</button>
+            </div>
+        </div>
+    </div>
+    <facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+
+    <table class="table mt-4">
+        <tr class="table-head">
+            <th>Full Name</th>
+            <th>ID No.</th>
+            <th>Country</th>
+            <th>Pass Category</th>
+            <th>Mobile No.</th>
+            <th>Email</th>
+            <th>Company</th>
+            <th class="center-align last">Status</th>
+        </tr>
+        <tr class="table-head" *ngFor="let visitor of visitors">
+            <td>{{visitor.firstName}} {{visitor.lastName}}</td>
+            <td>{{visitor.identification}}</td>
+            <td>{{visitor.country}}</td>
+            <td>{{visitor.passCategory}}</td>
+            <td>{{visitor.mobileNo}}</td>
+            <td>{{visitor.email}}</td>
+            <td>{{visitor.company}}</td>
+            <td class="center-align last">
+                <div [ngClass]="getVisitorStatusClass(visitor.visitorStatus)">
+                    {{visitor.visitorStatus}}
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="7" class="text-left">
+                Total Visitors: {{visitors.length}}
+            </td>
+        </tr>
+    </table>
+    <facets-no-records [items]="visitors"></facets-no-records>
+    <div class="page-footer">
+        <mat-paginator [length]="searchModel.totalRecords" [pageSize]="searchModel.pageSize"
+            (page)="pageChanged($event)" [pageSizeOptions]="pageSizeOptions" aria-label="Select page"
+            [showFirstLastButtons]="true">
+        </mat-paginator>
+    </div>
+</section>

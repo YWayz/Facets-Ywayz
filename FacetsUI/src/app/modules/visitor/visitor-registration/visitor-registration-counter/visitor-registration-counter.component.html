@@ -1,0 +1,38 @@
+<section class="container">
+    <div class="info-card">
+        <div class="card-h container-fluid">
+            <div class="sub-head">Registration Counter</div>
+        </div>
+        <hr>
+        <form [formGroup]="registrationCounterForm">
+            <div class="card-b">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col">
+                            <div class="row ">
+                                <div class="col">
+                                    <div class="form-group w-100">
+                                        <input type="text" placeholder="Select a counter" aria-label="Select a counter"
+                                            class="form-control" formControlName="counter" [matAutocomplete]="autoCounter">
+                                        <mat-autocomplete autoActiveFirstOption #autoCounter="matAutocomplete">
+                                            <mat-option *ngFor="let option of filteredOptions | async"
+                                                [value]="option.name">
+                                                {{option.name}}
+                                            </mat-option>
+                                        </mat-autocomplete>
+                                        <div class="danger" *ngIf="validationModel.displayMessage.counter">
+                                            {{validationModel.displayMessage.counter}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="action-footer mt-4">
+        <button type="button" class="btn btn-primary" (click)="save()">Next</button>
+    </div>
+</section>

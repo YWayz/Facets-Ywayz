@@ -1,0 +1,107 @@
+<facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+<section class="container">
+    <form [formGroup]="passForm">
+        <div class="card-white">
+            <div class="form-group">
+                <label>Pass Category</label>
+                <mat-select class="form-control" placeholder="Choose a pass category" formControlName="passCategoryId"
+                    required (selectionChange)="onPassCategoryChange($event)">
+                    <mat-option *ngFor="let passCategory of passCategories" [value]="passCategory.key">{{
+                        passCategory.value }}</mat-option>
+                </mat-select>
+                <div class="danger" *ngIf="validationModel.displayMessage.passCategoryId">
+                    {{validationModel.displayMessage.passCategoryId}}
+                </div>
+            </div>
+
+            <label *ngIf="isDatesShow" class="mb-2 mt-4">Event Dates</label>
+            <p *ngIf="isDatesShow">Please select the dates for which you required Pass Information</p>
+            <div *ngIf="isDatesShow" class="d-flex mb-4">
+                <div class="mr-2" *ngIf="eventDates.length > 1">
+                    <div [ngClass]="(isAllSelected && isDisable) ? 'date-card disableDiv' : isAllSelected ? 'date-card' :'date-card-not'" (click)="isAllChecked()">
+                        <div class="date">All</div>
+                        <div class="month">&nbsp;</div>
+                    </div>
+                </div>
+                <div [ngClass]="(eventDate.isSelected && eventDate.isInvoiced) ? 'date-card disableDiv' :eventDate.isSelected ? 'date-card' :'date-card-not'" *ngFor="let eventDate of eventDates; let index = index">
+                    <div (click)="checkUncheck(eventDate)">
+                        <div class="date">{{eventDate.value | date:'dd'}}</div>
+                        <div class="month">{{eventDate.value | date:'MMM'}}</div>
+                    </div>
+                </div>
+            </div>
+
+            <p *ngIf="checkedList.length != 0">Applied Discount: {{ appliedDiscount == '' ? 'No discount applied' : appliedDiscount }}</p>
+
+            <p *ngIf="isDatesShow" class="mt-4">Pass Rates for the selected day/dates</p>
+            <div class="wrapper-card mt-4" *ngIf="isDatesShow">
+                <div class="cards_wrap" *ngIf="!isFlatRate">
+                    <div class="card_item" *ngFor="let selectedList of unInvoicedCheckedList">
+                        <div>
+                            <div>
+                                <div class="card cardLeft">
+                                    <h1>Pass Rates</h1>
+                                    <div class="title">
+                                        <h2>{{passCategoryModel.name}} - {{ selectedList.value | date:'dd' }} {{ selectedList.value | date:'MMM' }}</h2>
+                                        <span>Pass Category</span>
+                                    </div>
+                                </div>
+
+                                <div class="card cardRight">
+                                    <div class="eye">
+                                        <span class="material-icons-outlined">
+                                            confirmation_number
+                                        </span>
+                                    </div>
+                                    <div class="number">
+                                        <h3>LKR {{ amount | number:'1.2' }}</h3>
+                                        <span>Price</span>
+                                    </div>
+                                    <div class="barcode"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="cards_wrap">
+                    <div class="cards_wrap" *ngIf="isFlatRate">
+                        <div class="card_item">
+                            <div>
+                                <div>
+                                    <div class="card cardLeft">
+                                        <h1>Pass Rates</h1>
+                                        <div class="title">
+                                            <h2>{{passCategoryModel.name}} - {{ isFlatRateEventDate.startDate |
+                                                date:'dd' }} {{
+                                                isFlatRateEventDate.startDate | date:'MMM' }} - {{ isFlatRateEventDate.endDate |
+                                                    date:'dd' }} {{
+                                                    isFlatRateEventDate.endDate | date:'MMM' }}</h2>
+                                            <span>Pass Category</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="card cardRight">
+                                        <div class="eye">
+                                            <span class="material-icons-outlined">
+                                                confirmation_number
+                                            </span>
+                                        </div>
+                                        <div class="number">
+                                            <h3>LKR {{ amount | number:'1.2' }}</h3>
+                                            <span>Price</span>
+                                        </div>
+                                        <div class="barcode"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="action-footer mt-4">
+        <button type="button" class="btn btn-light mr-2" (click)="back()">Back</button>
+        <button type="button" class="btn btn-primary" (click)="savePass()"> {{ isPavilionSessionExist ? 'Proceed to pavilion' : 'Proceed to payment' }}</button>
+    </div>
+</section>

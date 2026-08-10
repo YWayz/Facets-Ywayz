@@ -1,0 +1,30 @@
+<facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+<!-- //Pass Rate -->
+<section class="container">
+    <table class="table" [facetsAuthorization]="[superAdminPermissions.all, passCategoryPermissions.viewPassRate]">
+        <tr class="table-head">
+            <th>Pass Category</th>
+            <th>Chargeable</th>
+            <th class="text-right">Standard Rate (LKR)</th>
+            <th class="text-right">Discounted Rate (LKR)</th>
+            <th class="last">Action</th>
+        </tr>
+        <tr class="table-head" *ngFor="let passCategoryRates of passCategoryRatesModel">
+            <td>{{ passCategoryRates.passCategoryName }}</td>
+            <td [facetsAuthorization]="[superAdminPermissions.all, passCategoryPermissions.editPassRate]">
+                <label class="switch">
+                <input type="checkbox" [checked]="passCategoryRates.isChargeable" (click)="chargableChanged($event, passCategoryRates.passCategoryId, passCategoryRates.id, passCategoryRates.passCategoryName)">
+                <span class="slider round"></span>
+                </label>
+            </td>
+            <td class="text-right">{{ passCategoryRates.rate | number: '1.2' }}</td>
+            <td class="text-right">{{ passCategoryRates.discountedRate | number: '1.2' }}</td>
+            <td class="last">
+                <button [facetsAuthorization]="[superAdminPermissions.all, passCategoryPermissions.editPassRate]"  *ngIf="passCategoryRates.isChargeable" mat-button class="icon-btn mr-2" (click)="edit(passCategoryRates.isChargeable, passCategoryRates.passCategoryId, passCategoryRates.id, passCategoryRates.passCategoryName)">
+                    <span class="material-icons-outlined">edit</span>
+                </button>
+            </td>
+        </tr>
+    </table>
+    <facets-no-records [items]="passCategoryRatesModel"></facets-no-records>
+</section>

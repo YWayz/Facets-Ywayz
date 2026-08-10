@@ -1,0 +1,17 @@
+<facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+<div class="container">
+    <table class="table mt-4">
+        <tr class="table-head">
+            <th>Description</th>
+        </tr>
+        <tr class="table-head"  *ngFor="let teamMemberActivity of teamMemberActivitiesModel">
+            <td>{{ teamMemberActivity.description}}</td>            
+        </tr>
+    </table>
+    <facets-no-records [items]="teamMemberActivitiesModel"></facets-no-records>
+    <div class="page-footer">
+        <mat-paginator [length]="searchModel.totalRecords" [pageSize]="searchModel.pageSize" (page)="pageChanged($event)"
+        [pageSizeOptions]="pageSizeOptions" aria-label="Select page" [showFirstLastButtons]="true">
+        </mat-paginator> 
+    </div>
+</div>

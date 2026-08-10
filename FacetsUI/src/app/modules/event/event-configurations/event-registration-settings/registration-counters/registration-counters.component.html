@@ -1,0 +1,72 @@
+<!-- //pass congif -->
+<section class="container">
+    <div class="d-flex justify-content-end">
+        <button type="button" class="btn btn-outline-primary mr-2" [facetsAuthorization]="[superAdminPermissions.all, registrationCounterPermissions.view]" (click)="showFilterSection()">Filter</button>
+        <button type="button" class="btn btn-primary"
+            [facetsAuthorization]="[superAdminPermissions.all, registrationCounterPermissions.create]"
+            (click)="openCreatePopup()">+ Counter</button>
+    </div>
+
+    <form [formGroup]="counterForm">
+        <div class="card-filter mt-4" *ngIf="isFilterShow">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <label>Status</label>
+                        <mat-select class="form-control" placeholder="Choose counter status"
+                            formControlName="counterStatus">
+                            <mat-option value="locked">Locked</mat-option>
+                            <mat-option value="unLocked">UnLocked</mat-option>
+                        </mat-select>
+                    </div>
+
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        <button type="button" class="btn btn-primary mr-2 mt-32" (click)="search()">Search</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <table class="table mt-4" [facetsAuthorization]="[superAdminPermissions.all, registrationCounterPermissions.view]">
+        <tr class="table-head">
+            <th>Counter</th>
+            <th>Description</th>
+            <th>Counter Type</th>
+            <th [facetsAuthorization]="[superAdminPermissions.all, registrationCounterPermissions.toggleUnlock]">Status
+            </th>
+            <th class="last">Action</th>
+        </tr>
+        <tr class="table-head" *ngFor="let registrationCounter of registrationCounterModels;let i = index">
+            <td>{{ registrationCounter.name }}</td>
+            <td>{{ registrationCounter.description }}</td>
+            <td>{{ registrationCounter.counterType == 'RegistrationAndPayment' ? 'Registration and Payment' : registrationCounter.counterType == 'RegistrationOnly' ? 'Registration Only': registrationCounter.counterType == 'PaymentOnly' ? 'Payment Only' : '' }}</td>
+            <td [facetsAuthorization]="[superAdminPermissions.all, registrationCounterPermissions.toggleUnlock]">
+                <input class="checkbox" id="{{registrationCounter.id}}" [checked]="registrationCounter.isLocked"
+                    type="checkbox"
+                    (click)="counterStatusUpdate($event, registrationCounter.userName, registrationCounter.id)" />
+                <label for="{{registrationCounter.id}}" class="checkbox-label">
+                    <span class="on">Locked</span>
+                    <span class="off">Unlocked</span>
+                </label>
+            </td>
+            <td class="last"
+                [facetsAuthorization]="[superAdminPermissions.all, registrationCounterPermissions.edit, registrationCounterPermissions.delete]">
+                <button mat-button class="icon-btn mr-2" (click)="openCreatePopup(registrationCounter.id)"
+                    [facetsAuthorization]="[superAdminPermissions.all, registrationCounterPermissions.edit]">
+                    <span class="material-icons-outlined">edit</span>
+                </button>
+                <button mat-button class="icon-btn-delete" (click)="deleteRegistrationCounter(registrationCounter.id)"
+                    [facetsAuthorization]="[superAdminPermissions.all, registrationCounterPermissions.delete]">
+                    <span class="material-icons-outlined">delete</span>
+                </button>
+            </td>
+        </tr>
+    </table>
+    <facets-no-records [items]="registrationCounterModels"></facets-no-records>
+    <div class="page-footer">
+        <mat-paginator [length]="searchModel.totalRecords" [pageSize]="searchModel.pageSize"
+            (page)="pageChanged($event)" [pageSizeOptions]="pageSizeOptions" aria-label="Select page"
+            [showFirstLastButtons]="true">
+        </mat-paginator>
+    </div>
+</section>

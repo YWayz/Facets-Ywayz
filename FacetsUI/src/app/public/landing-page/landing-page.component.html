@@ -1,0 +1,336 @@
+<div class="header-public">
+    <div class="container">
+        <a href="#" class="logo">
+            <img src="../../../assets/public/logo.svg">
+        </a>
+        <nav class="navbar">
+            <button class="nav-toggle-btn" aria-label="close menu">
+                <span class="material-symbols-outlined">
+                    close
+                </span>
+            </button>
+            <ul class="navbar-list">
+                <li class="navbar-item">
+                    <a class="navbar-link" (click)="show('Home')">Home</a>
+                </li>
+                <!-- <li class="navbar-item">
+                    <a class="navbar-link" (click)="show('Ongoing')">Ongoing Events</a>
+                </li> -->
+                <li class="navbar-item">
+                    <a class="navbar-link" (click)="show('UpComing')">Upcoming events</a>
+                </li>
+            </ul>
+        </nav>
+
+        <button class="nav-toggle-btn" aria-label="open manu" mat-button [matMenuTriggerFor]="menu">
+            <span class="material-symbols-outlined">
+                menu
+            </span>
+        </button>
+
+        <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="show('Home')">Home</button>
+            <!-- <button mat-menu-item (click)="show('Ongoing')">Ongoing Events</button> -->
+            <button mat-menu-item (click)="show('UpComing')">Upcoming events</button>
+        </mat-menu>
+
+        <div class="overlay" data-nav-toggler data-overlay></div>
+
+    </div>
+</div>
+
+<main *ngIf="display == 'Home'">
+    <article>
+        <section class="section hero" style="background-image: url('../../../assets/public/diamond-bg.png')">
+            <div class="container">
+                <p class="hero-subtitle">
+                    <img src="../../../assets/public/Line 3.png">
+                </p>
+                <div class="header-title">
+                    <div class="hero-title">FACETS </div>
+                    <div class="hero-ti-img"><img src="../../../assets/public/sl.png"></div>
+                </div>
+                <p class="hero-text">
+                    Held annually in Colombo since 1991 with state and private sector patronage, FACETS Sri Lanka -
+                    International Gem & Jewellery Show will have hundreds of local and foreign exhibitors showcasing
+                    their gem and jewellery products.
+                </p>
+                <br>
+            </div>
+        </section>
+
+        <section class="sectionnn service">
+            <div>
+                <h1 class="h1 hero-title-two">Discover what's happening right now!
+                    Check out our upcoming events below.
+                </h1>
+                <br><br><br>
+                <ul class="grid-list" *ngIf="onGoingEventsSummaryModel.length != 0">
+                    <li *ngFor="let onGoingEvent of onGoingEventsSummaryModel">
+                        <div class="service-card" style="background-image: url({{onGoingEvent.logoURL}});">
+                            <h3 class="h3 facets">
+                                <a class="card-title">{{onGoingEvent.name}}</a>
+                            </h3>
+
+                            <p class="card-text">
+                                {{onGoingEvent.description}}</p>
+                            <div class="hayo-new">
+                                <div class="card-link-n">
+                                    <a (click)="show('Ongoing')" class="card-title">
+                                        <p class="card-text">
+                                            More details</p>
+                                    </a>
+                                </div>
+                                <div class="card-i" (click)="show('Ongoing')">
+                                    <img src="../../../assets/public/Component 5.png">
+                                </div>
+                            </div>
+                        </div>
+
+                    </li>
+                </ul>
+
+                <ul class="grid-list column-view">
+                    <li *ngFor="let upComingEvent of upComingEventsSummaryModel">
+                        <div class="blog-card" style="background-image: url({{upComingEvent.logoURL}});">
+
+                            <p class="card-text">Event Dates</p><br>
+
+                            <div class="wrapper">
+                                <time class="publish-date" *ngFor="let eventDate of upComingEvent.eventDates">
+                                    <span class="span">{{eventDate | date: 'd'}}</span>
+                                    <h3>{{eventDate | date: 'MMM'}}</h3>
+                                </time>
+                            </div>
+                            <h1>
+                                <a href="#" class="card-title">{{upComingEvent.name}}</a>
+                            </h1>
+
+
+                            <p class="card-text">
+                                {{upComingEvent.description}}
+                            </p>
+                            <div class="interest-wrapper">
+                                <span class="google-url">
+                                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSeEji9P-JM7q-5fPuksNIpycl4Oz05fcdtXZhqTsgnGLnrKuQ/viewform"
+                                        class="interested" target="_blank">I AM INTERESTED</a>
+                                </span>
+                            </div>
+
+                        </div>
+                    </li>
+                </ul>
+
+
+
+                <div class="sectionn blog" aria-label="blog" id="service"
+                    *ngIf="onGoingEventsSummaryModel.length == 0 && upComingEventsSummaryModel.length == 0 ">
+                    <div class="container">
+                        <div class="title-wrapper">
+                            <p class="section-subtitle"></p>
+                            <h2 class="h2 section-title">There are no any upcoming events</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </article>
+</main>
+
+<main *ngIf="display == 'Ongoing'">
+    <article>
+        <section class="section blog" aria-label="blog" id="service" *ngIf="onGoingEventsSummaryModel.length != 0">
+            <div>
+                <div class="title-wrapper">
+                    <h2 class="h2 section-title">Check out our upcoming events
+                        below.</h2>
+                </div>
+
+                <ul class="grid-list column-view">
+                    <li *ngFor="let onGoingEvent of onGoingEventsSummaryModel">
+                        <div class="blog-card" style="background-image: url({{onGoingEvent.logoURL}});">
+
+                            <p class="card-text">Event Dates</p><br>
+
+                            <div class="wrapper">
+                                <time class="publish-date" *ngFor="let eventDate of onGoingEvent.eventDates">
+                                    <span class="span">{{eventDate | date: 'd'}}</span>
+                                    <h3>{{eventDate | date: 'MMM'}}</h3>
+                                </time>
+                            </div>
+
+                            <h1>
+                                <a href="#" class="card-title">{{onGoingEvent.name}}</a>
+                            </h1><br>
+
+                            <p class="card-text">
+                                {{onGoingEvent.description}}
+                            </p>
+
+
+                            <div class="hayo-new">
+                                <div class="card-link-n">
+                                    <a (click)="navigateToVisitorRegistration(onGoingEvent.id)" class="card-title">
+                                        <p class="card-text">
+                                            Register Today</p>
+                                    </a>
+                                </div>
+                                <div class="card-i" (click)="navigateToVisitorRegistration(onGoingEvent.id)">
+                                    <img src="../../../assets/public/Component 5.png">
+                                </div>
+                            </div>
+
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="sectionn blog" aria-label="blog" id="service" *ngIf="onGoingEventsSummaryModel.length == 0">
+            <div class="container">
+
+                <div class="title-wrapper">
+                    <p class="section-subtitle"></p>
+
+                    <h2 class="h2 section-title">There are no any ongoing events</h2>
+                </div>
+            </div>
+        </div>
+
+    </article>
+</main>
+
+<main *ngIf="display == 'UpComing'">
+    <article>
+        <section class="section blog" aria-label="blog" id="service" *ngIf="upComingEventsSummaryModel.length != 0">
+            <div>
+                <div class="title-wrapper">
+                    <h2 class="h2 section-title">Check out our upcoming events below.</h2>
+                </div>
+
+                <ul class="grid-list column-view">
+                    <li *ngFor="let upComingEvent of upComingEventsSummaryModel">
+                        <div class="blog-card" style="background-image: url({{upComingEvent.logoURL}});">
+                            <p class="card-text">Event Dates</p><br>
+
+                            <div class="wrapper">
+                                <time class="publish-date" *ngFor="let eventDate of upComingEvent.eventDates">
+                                    <span class="span">{{eventDate | date: 'd'}}</span>
+                                    <h3>{{eventDate | date: 'MMM'}}</h3>
+                                </time>
+                            </div>
+                            <h1>
+                                <a href="#" class="card-title">{{upComingEvent.name}}</a>
+                            </h1>
+                          
+                            <p class="card-text">
+                                {{upComingEvent.description}}
+                            </p>
+
+                            <div class="interest-wrapper">
+                                <span class="google-url">
+                                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSeEji9P-JM7q-5fPuksNIpycl4Oz05fcdtXZhqTsgnGLnrKuQ/viewform"
+                                        class="interested" target="_blank">I AM INTERESTED</a>
+                                </span>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="sectionn blog" aria-label="blog" id="service" *ngIf="upComingEventsSummaryModel.length == 0">
+            <div class="container">
+
+                <div class="title-wrapper">
+                    <p class="section-subtitle"></p>
+
+                    <h2 class="h2 section-title">There are no any upcoming events</h2>
+                </div>
+            </div>
+        </div>
+    </article>
+</main>
+
+
+<footer class="footer" style="background-image: url(../../../assets/public/Group\ 196.png); ">
+    <div class="footer-top">
+        <div class="container">
+            <div class="footer-list">
+                <p class="footer-list-title">
+                    <img src="../../../assets/public/logo.svg">
+                </p>
+                <!-- <p class="footer-list-text">
+                    Held annually in Colombo since 1991 with state and private sector patronage,
+                    FACETS Sri Lanka 2020, the 30th International Gem & Jewellery </p> -->
+            </div>
+
+            <ul class="footer-list">
+                <li>
+                    <p class="footer-list-title-new">Explore links</p>
+                </li>
+                <li>
+                    <a class="footer-link" (click)="show('Home')">Home</a>
+                </li>
+                <li>
+                    <a class="footer-link" (click)="show('Ongoing')">Upcoming Events</a>
+                </li>
+                <!-- <li>
+                    <a class="footer-link" (click)="show('UpComing')">Upcoming events</a>
+                </li> -->
+                <li>
+                    <a class="footer-link" (click)="goToAdmin()">Admin</a>
+                </li>
+            </ul>
+
+            <ul class="footer-list">
+                <li>
+                    <img src="../../../assets/public/footer-img.png">
+                </li>
+            </ul>
+            <ul class="footer-list">
+                <li>
+                    <img src="../../../assets/public/footer social.png" height="60px" width="170px">
+                </li>
+                <br>
+                <li>
+                    <div class="social-wrapper">
+
+                        <ul class="social-list">
+
+                            <li>
+                                <a href="https://www.facebook.com/FacetsSriLanka/?fref=ts" class="social-link"
+                                    target="_blank">
+                                    <img src="../../../assets/icons/Facebook.png" height="30px" width="30px">
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="https://www.instagram.com/facetssrilanka/" class="social-link" target="_blank">
+                                    <img src="../../../assets/icons/Instagram.png" height="30px" width="30px">
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="https://twitter.com/FacetsSL" target="_blank" class="social-link">
+                                    <img src="../../../assets/icons/twitter.png" height="30px" width="30px">
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+        <p class="copyright">
+            &copy; 2023
+            <span class="material-symbols-outlined">
+                favorite
+            </span> by
+            <a href="#" class="copyright-link">FACETS SRI - LANKA</a>
+        </p>
+    </div>
+</footer>

@@ -1,0 +1,117 @@
+<facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+<section class="container">
+    <facets-verify-nic-passport [memberType]="'visitor'"
+        [selectedDocumentType]="visitorModel.visitorIdentityType == 'NIC' ? 'nic' : 'passport'"
+        [searchValue]="verificationNumber" (sendSearchValueChange)="isView = false" [isPayLater]="isPayLater"
+        (sendVisitorSearchModel)="patchVisitor($event)"></facets-verify-nic-passport>
+    <div class="info-card mt-4" *ngIf="isView">
+        <div class="card-h container-fluid">
+            <div class="sub-head">Personal Information</div>
+        </div>
+        <hr>
+        <form [formGroup]="visitorRegistrationForm">
+            <div *ngIf="visitorSearchModel.visitorStatus == 'BlackListed'" class="blacklist">
+                <img class="img" src="../../../../../assets/images/blacklisted.png" />
+            </div>
+            <div class="card-b">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-lg-9 col-md-8 col-sm-12">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group w-100">
+                                        <label>First Name <span class="danger-color">*</span></label>
+                                        <input class="form-control" placeholder="Ex. James Fin"
+                                            formControlName="firstName">
+                                    </div>
+                                    <div class="danger" *ngIf="validationModel.displayMessage.firstName">
+                                        {{validationModel.displayMessage.firstName}}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group w-100">
+                                        <label>Last Name </label><span class="danger-color">*</span>
+                                        <input class="form-control" placeholder="Ex. James Fin"
+                                            formControlName="lastName">
+                                    </div>
+                                    <div class="danger" *ngIf="validationModel.displayMessage.lastName">
+                                        {{validationModel.displayMessage.lastName}}
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="col-lg-6 col-md-6 col-sm-12 w-100">
+                                        <label>Select Country *</label>
+                                        <input type="text" placeholder="Select country" aria-label="Select country"
+                                            class="form-control" formControlName="countryId" [matAutocomplete]="auto">
+                                        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+                                            <mat-option *ngFor="let option of filteredOptions | async"
+                                                [value]="option.value">
+                                                {{option.value}}
+                                            </mat-option>
+                                        </mat-autocomplete>
+                                        <div class="danger" *ngIf="validationModel.displayMessage.countryId">
+                                            {{validationModel.displayMessage.countryId}}
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group w-100">
+                                        <label>Email</label>
+                                        <input class="form-control" placeholder="Ex. email@email.com"
+                                            formControlName="email">
+                                        <div class="danger" *ngIf="validationModel.displayMessage.email">
+                                            {{validationModel.displayMessage.email}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group w-100">
+                                        <label>Mobile No. </label><span class="danger-color">*</span>
+                                        <input class="form-control" placeholder="Ex. +94773060489"
+                                            formControlName="mobileNumber">
+                                        <div class="danger" *ngIf="validationModel.displayMessage.mobileNumber">
+                                            {{validationModel.displayMessage.mobileNumber}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group w-100">
+                                        <label>Company Name</label>
+                                        <input class="form-control" placeholder="Ex. Inexis Consulting"
+                                            formControlName="companyName">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3" formGroupName="address">
+                                <div class="col">
+                                    <div class="form-group w-100">
+                                        <label>Address</label>
+                                        <input class="form-control" placeholder="Ex. 45/55, Conway Road, Nairobi, Kenya"
+                                            formControlName="address">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-4 col-sm-12">
+                            <div class="upload-card">
+                                <facets-image-attachment-capture (getfiles)="getFiles($event)"
+                                    [imagePath]="visitorModel.imageUrl"></facets-image-attachment-capture>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="action-footer mt-4" *ngIf="isView">
+        <button type="button" class="btn btn-light mr-2" (click)="back()">Discard</button>
+        <button type="button" class="btn btn-primary" (click)="save()"
+            *ngIf="visitorSearchModel.visitorStatus != 'BlackListed'">Next</button>
+    </div>
+</section>

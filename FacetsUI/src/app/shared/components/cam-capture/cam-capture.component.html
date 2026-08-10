@@ -1,0 +1,12 @@
+<div class="mod-z">
+    <mat-dialog-content class="mat-typography">
+        <webcam [width]="350" [height]="500" [switchCamera]="nextWebcamObservable" [trigger]="triggerObservable"
+            (imageCapture)="handleImage($event)" [imageQuality]="1">
+        </webcam>
+    </mat-dialog-content>
+    <mat-dialog-actions>
+        <button mat-button mat-dialog-close>Close</button>
+        <button mat-button cdkFocusInitial (click)="triggerSnapshot()">Capture</button>
+        <button mat-button (click)="showNextWebcam(true);" [disabled]="!multipleWebcamsAvailable">Switch Camera</button>
+    </mat-dialog-actions>
+</div>

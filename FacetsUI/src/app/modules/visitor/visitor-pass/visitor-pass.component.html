@@ -1,0 +1,81 @@
+<facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+<header>
+    <h3>Pass Generation</h3>
+</header>
+
+<section class="container">
+    <div class="card-grey">
+        <label>Event Dates</label>
+        <p>Please select a date for which you need to verify</p>
+        <div class="d-flex">
+            <div class="date-card" [ngClass]="eventDate.isSelected ? 'date-card' :'date-card-not'"
+                *ngFor="let eventDate of eventDates" (click)="selectEventDate(eventDate.key)">
+                <div class="date">{{eventDate.value | date: 'dd' }}</div>
+                <div class="month">{{eventDate.value | date: 'MMM' }}</div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="grid-search mt-4">
+        <div class="search-wrapper">
+            <span class="material-icons-round">search</span>
+            <input class="search-input" type="text" placeholder="Search by Full Name, NIC/Passport and Mobile No."
+                [(ngModel)]="searchModel.searchTerm">
+            <button class="btn-search" mat-icon-button (click)="clearSearchTerm()"
+                *ngIf="searchModel.searchTerm.length > 0">
+                <span class="material-icons-round">close</span>
+            </button>
+        </div>
+        <button type="button" class="btn btn-primary" (click)="search()">Search</button>
+        <button type="button" class="btn btn-primary" (click)="scanQr()">
+            <span class="material-icons-outlined mr-1" style="font-size: 13px !important;">qr_code_scanner</span>Scan
+            QR</button>
+        <button type="button" class="btn btn-outline-primary" (click)="reset()">Reset</button>
+        <button type="button" class="btn btn-outline-primary" (click)="showAll()">Show All</button>
+    </div>
+    <table class="table mt-4">
+        <tr class="table-head">
+            <th>Full Name</th>
+            <th>NIC/Passport No.</th>
+            <th>Mobile No.</th>
+            <th>Pass Category</th>
+            <th class="last"></th>
+        </tr>
+        <tr class="table-head" *ngFor="let visitorPass of visitorPassModels">
+            <td><button type="button" class="btn btn-link"
+                    (click)="navigateToVisitorPassProfile(visitorPass.visitorId, visitorPass.attendanceScheduleId, visitorPass.visitorRegistrationId)">{{visitorPass.firstName
+                    + ' ' + visitorPass.lastName }}
+                </button>
+            </td>
+            <td>{{ (visitorPass.nicNumber == null || visitorPass.nicNumber == undefined) ? visitorPass.passportNumber :
+                visitorPass.nicNumber }}
+            </td>
+            <td>{{visitorPass.mobileNumber}}
+
+            </td>
+            <td>
+                {{visitorPass.passCategoryName}}
+            </td>
+            <td class="last">
+                <div *ngIf="visitorPass.isInvoiced == true">
+                    <button type="button" class="btn btn-primary pass-btn" 
+                        [facetsAuthorization]="[passGenerationPermissions.visitorPassGeneration]"
+                        (click)="generatePass(visitorPass.visitorId, visitorPass.attendanceScheduleId)">Generate
+                        Pass</button>
+                </div>
+                <div
+                    *ngIf="visitorPass.isInvoiced == false && (visitorPass.onSitePayingMode == onSitePayingMode.payAtPassGeneration || paymentSettingsModel.payLaterForOnlineRegistration)">
+                    <button type="button" class="btn btn-primary pass-btn" (click)="goToPayLater(visitorPass.visitorRegistrationId,visitorPass)">Pay</button>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <facets-no-records [items]="visitorPassModels"></facets-no-records>
+    <div class="page-footer">
+        <mat-paginator [length]="searchModel.totalRecords" [pageSize]="searchModel.pageSize"
+            (page)="pageChanged($event)" [pageSizeOptions]="pageSizeOptions" aria-label="Select page"
+            [showFirstLastButtons]="true">
+        </mat-paginator>
+    </div>
+</section>

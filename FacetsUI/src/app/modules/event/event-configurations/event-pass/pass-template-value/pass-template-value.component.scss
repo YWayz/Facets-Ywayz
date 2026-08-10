@@ -1,0 +1,26 @@
+.badge {
+    margin-left: 0;
+    background-color: #ffffff;
+    background-image: url('/assets/img/lnr-menu.svg');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    color: #717171;
+    border: 1px solid #ccc;
+    font-weight: 400;
+    padding: 8px 10px;
+    height: 34px;
+    text-align: left;
+    display: block;
+    margin-bottom: -1px;
+    cursor: move;
+    border-radius: 0;
+    display: flex;
+    justify-content: flex-start;
+
+    span{
+      width: 88%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    }
+  }

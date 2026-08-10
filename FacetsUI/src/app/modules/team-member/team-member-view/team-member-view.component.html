@@ -1,0 +1,89 @@
+<facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+<header>
+    <h3>Team Member</h3>
+    <div class="btn-al-right">
+        <button type="button" class="btn btn-primary" (click)="navigateToCreate()"
+            [facetsAuthorization]="[superAdminPermissions.all, teamMemberRegistrationPermissions.register]">+ Team
+            Member</button>
+    </div>
+</header>
+<section class="container">
+
+    <div class="grid-search">
+        <div class="search-wrapper">
+            <span class="material-icons-round">search</span>
+            <input class="search-input" type="text"
+                placeholder="Search by First Name, Last Name, NIC Number or Passport Number and Mobile Number."
+                [(ngModel)]="searchModel.searchTerm">
+            <button class="btn-search" mat-icon-button (click)="clearSearchTerm()"
+                *ngIf="searchModel.searchTerm.length > 0">
+                <span class="material-icons-round">close</span>
+            </button>
+        </div>
+        <button type="button" class="btn btn-primary" (click)="search()">Search</button>
+        <button type="button" class="btn btn-primary" *ngIf="!showFilter"
+        (click)="showFilter = !showFilter">Filter</button>
+    <button type="button" class="btn btn-primary" *ngIf="showFilter" (click)="cancelFilter()">Cancel Filter</button>
+
+        <!-- <button type="button" class="btn btn-primary" (click)="showFilterSection()">Filter</button> -->
+    </div>
+
+    <div class="card-filter mt-4" *ngIf="showFilter">
+        <div class="filter-grid">
+            <mat-form-field>
+                <mat-label>Select Pass Category</mat-label>
+                <mat-select [(ngModel)]="teamMemberFilterModel.passCategoryIds" multiple>
+                    <mat-option *ngFor="let pass of passCategories" [value]="pass.key">{{pass.value}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field>
+                <mat-label>Select Team Member Status</mat-label>
+                <mat-select [(ngModel)]="teamMemberFilterModel.teamMemberStatus">
+                    <mat-option *ngFor="let status of teamMemberStatuses" [value]="status">{{status}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+        </div>
+    </div>
+
+    <table class="table mt-4">
+        <tr class="table-head">
+            <th>Full Name</th>
+            <th>NIC/Passport No.</th>
+            <th>Mobile No.</th>
+            <th>Pass Category</th>
+            <th class="center-align last">Status</th>
+        </tr>
+        <tr class="table-head" *ngFor="let teamMemberEvent of teamMemberEventsModel">
+            
+            <td><button type="button" class="btn btn-link" (click)="navigateToProfile(teamMemberEvent.teamMemberId)">{{
+                    teamMemberEvent.fullName }}</button></td>
+            <td>{{ teamMemberEvent.nicNumber == null ? teamMemberEvent.passportNumber: teamMemberEvent.nicNumber}}</td>
+            <td>{{ teamMemberEvent.mobileNumber }}</td>
+            <td>{{ teamMemberEvent.passCategory }}</td>
+            <td *ngIf="teamMemberEvent.status=='Active'" class="center-align last">
+                <div class="s-active">
+                    Active
+                </div>
+            </td>
+            <td *ngIf="teamMemberEvent.status=='Cancelled'" class="center-align last">
+                <div class="s-cancel">
+                    Cancelled
+                </div>
+            </td>
+            <td *ngIf="teamMemberEvent.status=='BlackListed'" class="center-align last">
+                <div class="s-blacklisted">
+                    BlackListed
+                </div>
+            </td>
+        </tr>
+    </table>
+    <facets-no-records [items]="teamMemberEventsModel"></facets-no-records>
+    <div class="page-footer">
+        <mat-paginator [length]="searchModel.totalRecords" [pageSize]="searchModel.pageSize"
+            (page)="pageChanged($event)" [pageSizeOptions]="pageSizeOptions" aria-label="Select page"
+            [showFirstLastButtons]="true">
+        </mat-paginator>
+    </div>
+</section>

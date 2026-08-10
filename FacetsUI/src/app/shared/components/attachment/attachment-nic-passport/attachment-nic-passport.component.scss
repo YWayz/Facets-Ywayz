@@ -1,0 +1,171 @@
+img {
+    border-radius: 8px;
+    width: 100% !important;
+    height: 200px !important;
+    float: left;
+    object-fit: contain;
+}
+
+.card-b-1 {
+    padding: 0px;
+    padding-bottom: 10px;
+}
+
+.attachment {
+    display: flex;
+    justify-content: start;
+    border-radius: 4px;
+
+    .text {
+        font-size: 14px;
+        font-weight: 300;
+    }
+
+    .material-icons-outlined {
+        color: #0085FF !important;
+    }
+}
+
+.desc-center {
+    justify-content: center;
+}
+
+.cards_wrap {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.cards_wrap .card_item {
+    padding: 10px;
+    //width: 30%;
+}
+
+.cards_wrap .card_inner {
+    background: #D9D9D9;
+    border-radius: 6px;
+    padding: 10px;
+    min-width: 200px;
+    width: 100%;
+}
+
+.card-sm-h {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-sm-b {
+    display: block;
+    width: auto;
+
+    .wrap-text {
+        display: inline-block;
+        max-width: 215px;
+        white-space: nowrap;
+        overflow: hidden !important;
+        text-overflow: ellipsis;
+    }
+}
+
+
+@media screen and (max-width: 1024px) {
+    .cards_wrap .card_item {
+        width: 50%;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .cards_wrap .card_item {
+        width: 50%;
+    }
+
+    .wrapper1 .header {
+        height: 60px;
+    }
+}
+
+@media screen and (max-width: 568px) {
+
+    .header .header-item {
+        display: grid;
+        grid-template-columns: 1fr !important;
+        grid-gap: 15px;
+        justify-content: space-between;
+    }
+
+    .cards_wrap .card_item {
+        width: 100%;
+    }
+
+    .wrapper1 .header {
+        font-size: 14px;
+    }
+
+    .cards_wrap .card_inner {
+        min-width: 220px;
+    }
+
+    .card-sm-b .wrap-text {
+        max-width: 190px;
+    }
+}
+
+.card-white {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 6px;
+}
+
+
+img {
+    border-radius: 8px;
+    height: 245px;
+    float: left;
+}
+
+.file-input__input {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+.file-input__label {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    font-size: 14px;
+    padding: 10px 12px;
+    background-color: #0177FB;
+    box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.25);
+    margin-top: 10px;
+}
+
+.file-input__label svg {
+    height: 16px;
+    margin-right: 4px;
+}
+
+.image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-close-image {
+    display: block;
+    right: 44px;
+}
+
+.close-icon{
+    font-weight: 900;
+    color: aliceblue;
+}

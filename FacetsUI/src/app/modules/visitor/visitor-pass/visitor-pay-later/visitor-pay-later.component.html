@@ -1,0 +1,67 @@
+<facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+<section class="container">
+    <div class="payment mt-4">
+        <p>Amount for the pass of event: LKR {{ finalAmount | number:'1.2' }}</p>
+        <p>Amount for the pass of pavilions: LKR {{ totalPavilionAmount | number:'1.2' }}</p>
+        <p>Total Amount to pay LKR: {{ totalFinalAmount | number:'1.2' }}</p>
+        <div class="payment-method">
+            <div>Choose your payment method</div>
+        </div>
+        <form [formGroup]="paymentForm">
+            <div class="payment-method-select mt-4">
+                <div class="payment-type mt-4">
+                    <label class="radio">
+                        <input class="mr-2" type="radio" [value]="'cash'" (change)="onPaymentMethod()"
+                            formControlName="paymentMethod" checked>Cash
+                    </label>
+                    <img src="../../../../assets/images/money.png" alt="Cash" width="50" height="50">
+                </div>
+                <div class="payment-type">
+                    <label class="radio">
+                        <input class="mr-2" type="radio" [value]="'card'" (change)="onPaymentMethod()"
+                            formControlName="paymentMethod">Card
+                    </label>
+                    <div class="d-flex">
+                        <img class="mr-2" src="../../../../assets/images/visa-logo.png" alt="Cash" width="50"
+                            height="24">
+                        <img src="../../../../assets/images/Mastercard-Logo.png" alt="Cash" width="50" height="26">
+                    </div>
+                </div>
+                <hr class="mt-3" *ngIf="isShowForCardPayment">
+                <div class="payment-method" *ngIf="isShowForCardPayment">
+                    <div>Card Information</div>
+                </div>
+                <div class="row" *ngIf="isShowForCardPayment">
+                    <div class="col-lg-12">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group w-100 mt-4">
+                                    <label>Last 4 digits of the card</label>
+                                    <input class="form-control" placeholder="xxxx" maxlength="4"
+                                        formControlName="lastFourDigitsofCard">
+                                </div>
+                                <div class="danger" *ngIf="validationModel.displayMessage.lastFourDigitsofCard">
+                                    {{validationModel.displayMessage.lastFourDigitsofCard}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group w-100 mt-4">
+                                    <label>Reference Number</label>
+                                    <input class="form-control" formControlName="referenceNumber">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="action-footer mt-4">
+        <button type="button" class="btn btn-light mr-2" (click)="back()">Back</button>
+        <button type="button" class="btn btn-primary" (click)="save()" [disabled]="isDisableButton">
+            <i *ngIf="isDisableButton" class="spinner-border spinner-border-sm me-2"></i>
+            Pay</button>
+    </div>
+</section>

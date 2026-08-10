@@ -1,0 +1,47 @@
+<facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+<!-- //Pass Category -->
+<section class="container">
+    <div class="d-flex justify-content-end">
+        <button type="button" class="btn btn-primary"
+            [facetsAuthorization]="[superAdminPermissions.all, passCategoryPermissions.create]"
+            (click)="openCreatePopup()">+ Pass Category</button>
+    </div>
+
+    <table class="table mt-4" [facetsAuthorization]="[superAdminPermissions.all, passCategoryPermissions.view]">
+        <tr class="table-head">
+            <th>Pass Category</th>
+            <th>Description</th>
+            <th>Pass Type</th>
+            <th class="last-pass">Pass generation type</th>
+            <th class="last-type">Action</th>
+        </tr>
+        <tr class="table-head" *ngFor="let passCategory of passCategoryModels">
+            <td>{{ passCategory.name }}</td>
+            <td>{{ passCategory.description }}</td>
+            <td>{{ passCategory.passTypeName }}</td>
+            <td class="center-align last">
+                <ng-container *ngIf="passCategory.passTypeName == 'Visitor'">
+                    <input class="checkbox" id="{{passCategory.id}}"
+                        [checked]="passCategory.visitorPassCategoryType == 'PerDayPass' ? false : true" type="checkbox"
+                        (click)="passCategoryTypeStatusUpdate($event, passCategory.id, passCategory.eventId)" />
+                    <label for="{{passCategory.id}}" class="checkbox-label">
+                        <span class="on">Common Pass</span>
+                        <span class="off">Per Day Pass</span>
+                    </label></ng-container>
+            </td>
+            <td class="center-align last">
+                <button mat-button class="icon-btn mr-2"
+                    [facetsAuthorization]="[superAdminPermissions.all, passCategoryPermissions.edit]"
+                    (click)="openCreatePopup(passCategory.id)">
+                    <span class="material-icons-outlined">edit</span>
+                </button>
+                <button mat-button class="icon-btn-delete"
+                    [facetsAuthorization]="[superAdminPermissions.all, passCategoryPermissions.delete]"
+                    (click)="deleteCategory(passCategory.id)">
+                    <span class="material-icons-outlined c-white">delete</span>
+                </button>
+            </td>
+        </tr>
+    </table>
+    <facets-no-records [items]="passCategoryModels"></facets-no-records>
+</section>

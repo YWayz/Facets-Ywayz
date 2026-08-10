@@ -1,0 +1,15 @@
+<header>
+    <h3>User Management</h3>
+</header>
+<mat-tab-group>
+    <mat-tab *ngIf="!isUserHidePermission" label="Users">
+        <ng-template matTabContent>
+            <facets-user></facets-user>
+        </ng-template>
+    </mat-tab>
+    <mat-tab *ngIf="!isUserRoleHidePermission" label="User Roles">
+        <ng-template matTabContent>
+            <facets-role-view></facets-role-view>
+        </ng-template>
+    </mat-tab>
+</mat-tab-group>

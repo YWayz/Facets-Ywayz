@@ -1,0 +1,71 @@
+.image{
+    width: 50px;
+}
+ 
+
+
+.upload-input-view {
+    height: 100%;
+    width: 100%;
+    // height: 300px;
+    // width: 300px;
+    text-align: center;
+    display: inline-block;
+    padding: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+.upload-card {
+    background: #F4F4F4;
+    // height: 100%;
+    // width: 100%;
+    // height: 300px;
+    // width: 300px;
+    border-radius: 6px;
+    padding: 10px;
+    display: inline-block;
+    justify-content: center;
+    align-items: center;
+
+    .upload-input {
+        height: 85%;
+        width: 100%;
+        text-align: center;
+        display: inline-block;
+        padding: 20px;
+        justify-content: center;
+        align-items: center;
+        padding-top: 80px;
+    }
+
+    .btn-link {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        width: 100% !important;
+    }
+}
+
+.upload-input {
+    border-radius: 6px;
+    border: 1px dashed #B9B9B9;
+    background: #F4F4F4;
+    font-size: 14px;
+    font-weight: 300;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80px;
+
+    .material-icons-outlined {
+        font-size: 20px !important;
+        margin-right: 10px;
+    }
+
+    .select {
+        cursor: pointer;
+        color: #0177FB;
+        text-decoration: none !important;
+    }
+}

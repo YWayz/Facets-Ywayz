@@ -1,0 +1,51 @@
+hr {
+    margin-left: 15%;
+    margin-right: 15%;
+}
+
+.img_cont {
+    margin-left: 20%;
+    margin-right: 20%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.img {
+    width: 100px;
+    height: 100px;
+}
+
+#canvas_contVisitor {
+    align-items: center;
+}
+
+.canvas-wrapper {
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.canvas-container {
+    margin-left: 25%;
+}
+
+.remove {
+    padding: 5px 10px;
+    background-color: #ff412c;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+}
+
+.template-pr {
+    padding-right: 8px;
+}
+
+.canvas-lay{
+    display: flex;
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+    .canvas-lay{
+        display: block;
+    }
+}

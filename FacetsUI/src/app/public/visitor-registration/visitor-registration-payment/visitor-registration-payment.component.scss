@@ -1,0 +1,61 @@
+
+
+.payment{
+    max-width: 36em;
+    margin: 0 auto;
+    background-color: white;
+    color: #5e6977;
+    border-radius: 0.3em;
+    box-shadow: 0.2em 0.3em 0.8em -0.45em rgba(black, 0.2), 0 0.2em 0.5em 0 rgba(black, 0.08);
+    padding: 20px;
+}
+
+.payment-method x{
+    margin: 0;
+    padding: 1.8em 2em;
+    font-size: 1.2em;
+    line-height: 1.2;
+    color: #5e6977;
+}
+
+.payment-method-select{
+
+}
+
+.payment-type{
+    height: 60px;
+    padding: 10px;
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 4px;
+
+    .radio{
+        display:flex;
+        justify-content: start;
+        align-items: center;
+    }
+}
+
+.payment-type:hover{
+    background-color: #ededed;
+}
+
+.mt-6{
+    margin-top: 29px;
+}
+
+.container {
+    padding: 25px !important;
+    height: 95vh !important;
+    overflow: auto !important;
+}
+
+.free-charge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 20px;
+    background: #e1e1e1;
+}

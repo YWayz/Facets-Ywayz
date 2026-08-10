@@ -1,0 +1,10 @@
+<div class="dialog-head">
+    <div class="title"></div>
+    <div class="title"></div>
+    <button class="btn" mat-icon-button (click)="discard()"><span
+        class="material-icons-round">close</span>
+    </button>
+</div>
+<mat-dialog-content class="mat-typography">
+    <facets-qr-scanner (qrCodeResult)="verifyQr($event)"></facets-qr-scanner>
+</mat-dialog-content>

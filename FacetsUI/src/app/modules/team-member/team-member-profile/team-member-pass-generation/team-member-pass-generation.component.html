@@ -1,0 +1,20 @@
+<header class="no-printme">
+    <h3>Pass Generation</h3>
+</header>
+
+<section class="container printme">
+    <div class='canvas-wrapper'>
+        <canvas id="canvasFront"
+            [ngStyle]="{'border': (teamMemberPassTemplateModel.width != 0 && teamMemberPassTemplateModel.width != 0) ? '1px solid #000000' : ''}">
+        </canvas>
+    </div>
+    <div class="qrcodeImage" hidden>
+        <qrcode [qrdata]="passVerificationJson" [allowEmptyString]="true" [alt]="'A custom alt attribute'"
+            [ariaLabel]="'QR Code image with the following content...'" [cssClass]="'center'" [colorDark]="'#000000ff'"
+            [colorLight]="'#ffffffff'" [elementType]="'canvas'" [errorCorrectionLevel]="'L'" [imageHeight]="100"
+            [imageWidth]="100" [margin]="0" [scale]="1" [title]="'A custom title attribute'" [width]="100"
+            (qrCodeURL)="onChangeURL($event)"></qrcode>
+    </div>
+</section>
+
+<button type="button" class="btn btn-primary ml-1 no-printme " (click)="print()">Print</button>

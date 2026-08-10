@@ -1,0 +1,12 @@
+<div class="card-b">
+    <div class="container-fluid">
+        <img class="img" id="ele1" draggable="true" (dragstart)="dragElement($event)" (dragover)="allowDrop($event)"
+        src="../../../../../../assets/images/user-profile.png">
+        <img class="img" id="ele2" draggable="true" (dragstart)="dragElement($event)" (dragover)="allowDrop($event)"
+        src="../../../../../../assets/images/qr-code.png">
+        <span class="badge" *ngFor="let value of passValues;let i=index" draggable="true"
+        (dragstart)="dragElement($event)" (dragover)="allowDrop($event)" id="spanValue{{i}}">
+        <span>{{value}}</span>
+      </span>
+    </div>
+</div>

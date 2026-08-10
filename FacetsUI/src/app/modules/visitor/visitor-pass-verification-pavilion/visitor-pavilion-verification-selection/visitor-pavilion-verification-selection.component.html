@@ -1,0 +1,43 @@
+<facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+
+<div class="dialog-head">
+    <div class="title">Select Pavilion Session</div>
+    <button class="btn" mat-icon-button (click)="discard()"><span class="material-icons-round">close</span></button>
+</div>
+
+<mat-dialog-content class="mat-typography">
+    <form #pavilionSelectionForm="ngForm" novalidate>
+        <div class="sub-head">Please select a pavilion and session to verify</div>
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <label>Pavilion</label>
+            <mat-select class="form-control" placeholder="Choose a pavilion" [(ngModel)]="pavilionId" required
+                id="pavilion" name="pavilion" (selectionChange)="onPavilionChange($event)" #pavilion="ngModel">
+                <mat-option *ngFor="let pavilionSummary of pavilionSummariesModel" [value]="pavilionSummary.key">{{
+                    pavilionSummary.value }}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="isFormSubmitted && pavilion.errors?.['required']">
+                Pavilion is required
+            </mat-error>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <label>Pavilion Session</label>
+            <mat-select class="form-control" placeholder="Choose a pavilion session" [(ngModel)]="pavilionSessionId" required
+            id="pavilionSession" name="pavilionSession" #pavilionSession="ngModel">
+                <mat-option *ngFor="let pavilionSession of pavilionSessionSummariesModel" [value]="pavilionSession.id">
+                    {{pavilionSession.eventDate | date: 'dd/MM/yyyy'}}, {{pavilionSession.startTime | date:
+                    'hh:mm a'}} - {{pavilionSession.eventDate | date: 'dd/MM/yyyy'}}, {{pavilionSession.endTime
+                    | date: 'hh:mm a'}}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="isFormSubmitted && pavilionSession.errors?.['required']">
+                Pavilion Session is required
+            </mat-error>
+        </div>
+    </div>
+    </form>
+    <div class="action-footer mt-4">
+        <button type="button" class="btn btn-light mr-2" (click)="confirm(pavilionSelectionForm)">Confirm</button>
+    </div>
+</mat-dialog-content>

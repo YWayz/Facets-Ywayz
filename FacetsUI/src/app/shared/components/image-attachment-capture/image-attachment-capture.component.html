@@ -1,0 +1,23 @@
+    <div class="image" *ngIf="imageChangedEvent == '' && base64Image == ''">
+        <img [src]="imagePath">
+    </div>
+<div class="file-input">
+    <input type="file" accept=".png, .jpg, .jpeg" name="file-input" id="file-input" class="file-input__input" (change)="fileChangeEvent($event)"
+        onclick="this.value=null;" />
+    <div *ngIf="isShow">
+        <image-cropper *ngIf="imageChangedEvent != '' || base64Image != ''" [imageChangedEvent]="imageChangedEvent"  [maintainAspectRatio]="true" [aspectRatio]="3.5 / 4.5" (imageCropped)="imageCropped($event)" [imageBase64]="base64Image">
+        </image-cropper>
+    </div>
+    <label class="file-input__label w-100" for="file-input">
+        <span class="material-icons-outlined mr-1">
+            file_upload
+        </span>
+        <span>Upload File</span>
+    </label>
+</div>
+<button type="button" class="btn btn-link w-100 mt-2" (click)="openCamera()">
+    <span class="material-icons-outlined mr-1">
+        add_a_photo
+    </span>
+    <span>Open Camera</span>
+</button>

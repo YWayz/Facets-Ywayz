@@ -1,0 +1,40 @@
+<facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+    <div class="info-card">
+        <div class="card-h container-fluid">
+            <div class="sub-head">NIC/Passport No. for verification</div>
+        </div>
+        <hr>
+        <div class="card-b">
+            <form #verificationForm="ngForm">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-lg-10 col-md-8 col-sm-12">
+                            <div class="form-group w-100">
+                                <label>Enter NIC/Passport</label><span class="danger-color">*</span>
+                                <input class="form-control" placeholder="Ex. 0000000000" (keyup)="changeSearchValue()" name="search" [(ngModel)]="searchValue" #search="ngModel" [disabled]="isDisableNicPassport" required>
+                            </div>
+                            <div class="danger"
+                                *ngIf="(search.touched || isFormSubmitted) && search.errors?.required">
+                                NIC/Passport number is required
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-4 col-sm-12 margin-top" *ngIf="!isDisableNicPassport">
+                            <button id="verify" type="button" class="btn btn-primary w-100" (click)="verificationProcess(verificationForm);">Verify</button>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col">
+                            <label class="mr-2">
+                                <input class="mr-1" type="radio" name="optradio" (change)="changeSearchValue()" [(ngModel)]="selectedDocumentType"
+                                    [value]="'nic'" checked [disabled]="isDisableNicPassport">NIC
+                            </label>
+                            <label>
+                                <input class="mr-1" type="radio" name="optradio" (change)="changeSearchValue()" [(ngModel)]="selectedDocumentType"
+                                    [value]="'passport'" [disabled]="isDisableNicPassport">Passport
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>

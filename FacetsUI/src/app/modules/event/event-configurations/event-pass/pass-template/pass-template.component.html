@@ -1,0 +1,18 @@
+<header>
+    <h3>Pass Template</h3>
+    <div class="btn-al-right">
+        <button type="button" class="btn btn-primary" routerLink="/admin/event">Back</button>
+    </div>
+</header>
+<mat-tab-group>
+    <mat-tab label="Team Member">
+        <ng-template matTabContent>
+            <facets-member-pass-template></facets-member-pass-template>
+        </ng-template>
+    </mat-tab>
+    <mat-tab label="Visitors">
+        <ng-template matTabContent>
+            <facets-visitor-pass-template></facets-visitor-pass-template>
+        </ng-template>
+    </mat-tab>
+</mat-tab-group>

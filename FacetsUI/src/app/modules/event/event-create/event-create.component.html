@@ -1,0 +1,89 @@
+<header>
+    <h3 *ngIf="!isEdit">New Event</h3>
+    <h3 *ngIf="isEdit">{{eventModel.name}}</h3>
+    <div class="btn-al-right">
+        <button type="button" class="btn btn-danger" (click)="deleteEvent()" *ngIf="isEdit"
+            [facetsAuthorization]="[superAdminPermissions.all,eventPermissions.delete]">Delete</button>
+    </div>
+</header>
+
+<facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+<section class="container">
+    <div class="info-card">
+        <div class="card-h container-fluid">
+            <div class="sub-head">General Information</div>
+        </div>
+        <hr>
+        <form [formGroup]="eventForm">
+            <div class="card-b">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-lg-9 col-md-7 col-sm-12">
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12">
+                                    <div class="form-group w-100">
+                                        <label>Event Name</label>
+                                        <input class="form-control" placeholder="Ex. Facets2023" formControlName="name">
+                                    </div>
+                                    <div class="danger" *ngIf="validationModel.displayMessage.name">
+                                        {{validationModel.displayMessage.name}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-4">
+                                <div class="col-lg-12 col-md-12 col-sm-12">
+                                    <div class="form-group w-100">
+                                        <label>Description</label>
+                                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"
+                                            formControlName="description"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-4">
+                                <div class="col-lg-4 col-md-12 col-sm-12">
+                                    <div class="form-group">
+                                        <label>Event Dates :</label>
+                                        <mat-calendar class="mt-2" #calendar [dateClass]="isSelected"
+                                            (selectedChange)="onSelect($event,calendar)"></mat-calendar>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-12 col-sm-12">
+                                    <div class="form-group">
+                                        <label>Visitor Registration Start Date :</label>
+                                        <mat-calendar class="mt-2" (selectedChange)="onStartDateSelect($event)"
+                                            [(selected)]="startDate"></mat-calendar>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-12 col-sm-12">
+                                    <div class="form-group">
+                                        <label>Visitor Registration End Date :</label>
+                                        <mat-calendar class="mt-2" (selectedChange)="onEndDateSelect($event)"
+                                            [(selected)]="endDate"></mat-calendar>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-md-5 col-sm-12">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="upload-card">
+                                        <facets-image-attachment-capture [imagePath]="eventModel.logoURL"
+                                            (getfiles)="getFiles($event)"></facets-image-attachment-capture>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="action-footer mt-4">
+        <button type="button" class="btn btn-light mr-2" (click)="back()">Discard</button>
+        <button *ngIf="!isEdit" type="button" class="btn btn-primary" (click)="create()"
+            [facetsAuthorization]="[superAdminPermissions.all,eventPermissions.create]">Save</button>
+        <button *ngIf="isEdit" type="button" class="btn btn-primary" (click)="update()"
+            [facetsAuthorization]="[superAdminPermissions.all,eventPermissions.edit]">Update</button>
+    </div>
+</section>

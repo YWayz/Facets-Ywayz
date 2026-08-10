@@ -1,0 +1,119 @@
+<header>
+    <h3>Pavilion Visitor</h3>
+</header>
+<facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+
+<section class="container">
+    <div class="grid-search">
+        <div class="search-wrapper">
+            <span class="material-icons-round">search</span>
+            <input class="search-input" type="text"
+                placeholder="Search by First Name, Last Name, NIC Number or Passport Number."
+                [(ngModel)]="searchModel.searchTerm">
+            <button class="btn-search" mat-icon-button (click)="clearSearchTerm()"
+                *ngIf="searchModel.searchTerm.length > 0">
+                <span class="material-icons-round">close</span>
+            </button>
+        </div>
+        <button type="button" class="btn btn-primary" (click)="search()">Search</button>
+        <button type="button" class="btn btn-outline-primary" (click)="reset()">Reset</button>
+        <button type="button" class="btn btn-primary" (click)="showFilterSection()">Filter</button>
+    </div>
+
+    <form [formGroup]="visitorPavilionForm">
+        <div class="card-filter mt-4" *ngIf="isFilterShow">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="form-group">
+                            <mat-form-field>
+                                <label>Session Date</label>
+                                <input matInput [matDatepicker]="pickers" placeholder="Select the Session Date"
+                                    formControlName="eventDate" readonly>
+                                <mat-datepicker-toggle matIconSuffix [for]="pickers"></mat-datepicker-toggle>
+                                <mat-datepicker #pickers></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <label>Status</label>
+                        <mat-select class="form-control" placeholder="Choose a Pavilion status"
+                            formControlName="pavilionStatus">
+                            <mat-option value="false">Active</mat-option>
+                            <mat-option value="true">Cancelled</mat-option>
+                        </mat-select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="card mt-4">
+        <table class="table">
+            <tr class="table-head">
+                <th>Full Name</th>
+            </tr>
+            <ng-container *ngFor="let pavilionSessionVisitorModel of filteredPavilionSessionVisitorsModel">
+                <tr>
+                    <td class="wrap-text">{{ pavilionSessionVisitorModel.visitorFullName }}
+                        <button class="btn me-4" mat-icon-button *ngIf="!pavilionSessionVisitorModel.isExpanded"
+                            (click)="expandTableData(pavilionSessionVisitorModel.visitorFullName)">
+                            <span class="material-icons-outlined">
+                                arrow_drop_down
+                            </span>
+                        </button>
+                        <button class="btn me-4" mat-icon-button *ngIf="pavilionSessionVisitorModel.isExpanded"
+                            (click)="expandTableData(pavilionSessionVisitorModel.visitorFullName)">
+                            <span class="material-icons-outlined">
+                                arrow_drop_up
+                            </span>
+                        </button>
+                    </td>
+                </tr>
+                <ng-container *ngIf="pavilionSessionVisitorModel.isExpanded">
+                    <tr>
+                        <td>
+                            <table class="table">
+                                <tr class="th-sub">
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th>Pavilion Name</th>
+                                    <th>Session Date</th>
+                                    <th>Session Start Time</th>
+                                    <th>Session Start End</th>
+                                    <th class="center-align last">Status</th>
+                                </tr>
+                                <tr class="td-sub"
+                                    *ngFor="let pavilionSessionVisitor of pavilionSessionVisitorModel.visitorPavilionSessions">
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <td>{{ pavilionSessionVisitor.pavilionName }}</td>
+                                    <td>{{ pavilionSessionVisitor.sessionDate | date:'MM/dd/yy' }}</td>
+                                    <td>{{ pavilionSessionVisitor.sessionStartTime | date:'hh:mm a' }}</td>
+                                    <td>{{ pavilionSessionVisitor.sessionEndTime | date:'hh:mm a' }}</td>
+                                    <td class="center-align last"><div [ngClass]="getPavilionVisitorStatusClass(pavilionSessionVisitor.cancelled)">{{ pavilionSessionVisitor.cancelled == false ? 'Active' : 'Cancelled'}}</div></td>
+
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </ng-container>
+            </ng-container>
+
+        </table>
+        <facets-no-records [items]="filteredPavilionSessionVisitorsModel"></facets-no-records>
+        <div class="page-footer">
+            <mat-paginator [length]="searchModel.totalRecords" [pageSize]="searchModel.pageSize"
+                (page)="pageChanged($event)" [pageSizeOptions]="pageSizeOptions" aria-label="Select page"
+                [showFirstLastButtons]="true">
+            </mat-paginator>
+        </div>
+    </div>
+
+</section>

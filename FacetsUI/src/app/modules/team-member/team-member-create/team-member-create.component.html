@@ -1,0 +1,180 @@
+<facets-block-ui [isBlocked]="isBlocked"></facets-block-ui>
+<header>
+    <h3>New Team Member</h3>
+</header>
+<section class="container">
+    <facets-verify-nic-passport [memberType]="'teamMember'" (sendSearchValueChange)="isView = false"
+        (sendTeamMemberSearchModel)="patchTeamMember($event)"></facets-verify-nic-passport>
+
+    <div class="info-card mt-4" *ngIf="isView">
+        <div class="card-h container-fluid">
+            <div class="sub-head">Personal Information</div>
+        </div>
+        <hr>
+        <form [formGroup]="teamMemberForm">
+            <div class="card-b">
+                <div *ngIf="teamMemberSearchModel.status == 'Cancelled'" class="blacklist">
+                    <img class="img" src="../../../../assets/images/cancelled.png" />
+                </div>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-lg-9 col-md-8 col-sm-12">
+
+                            <div class="row">
+                                <div class="col-lg-2 col-md-4 col-sm-2">
+                                    <div class="form-group w-100">
+                                        <label>Title</label>
+                                        <mat-select class="form-control w-100" placeholder="Choose title"
+                                            formControlName="title">
+                                            <mat-option value="Mr">Mr</mat-option>
+                                            <mat-option value="Mrs">Mrs</mat-option>
+                                            <mat-option value="Ms">Ms</mat-option>
+                                            <mat-option value="Miss">Miss</mat-option>
+                                        </mat-select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-10">
+                                    <div class="form-group w-100">
+                                        <label>First Name</label><span class="danger-color">*</span>
+                                        <input class="form-control" placeholder="Ex. James Fin"
+                                            formControlName="firstName">
+                                    </div>
+                                    <div class="danger" *ngIf="validationModel.displayMessage.firstName">
+                                        {{validationModel.displayMessage.firstName}}
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-12">
+                                    <div class="form-group w-100">
+                                        <label>Last Name</label><span class="danger-color">*</span>
+                                        <input class="form-control" placeholder="Ex. James Fin"
+                                            formControlName="lastName">
+                                    </div>
+                                    <div class="danger" *ngIf="validationModel.displayMessage.lastName">
+                                        {{validationModel.displayMessage.lastName}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label>Mobile No.</label><span class="danger-color">*</span>
+                                        <input class="form-control" placeholder="Ex. +94773060489"
+                                            formControlName="mobileNumber">
+                                        <div class="danger" *ngIf="validationModel.displayMessage.mobileNumber">
+                                            {{validationModel.displayMessage.mobileNumber}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group w-100">
+                                        <label>Company Name</label>
+                                        <input class="form-control" placeholder="Ex. Inexis Consulting"
+                                            formControlName="companyName">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="form-group w-100">
+                                        <label>Email</label>
+                                        <input class="form-control" placeholder="Ex. email@email.com"
+                                            formControlName="email">
+                                    </div>
+                                    <div class="danger" *ngIf="validationModel.displayMessage.email">
+                                        {{validationModel.displayMessage.email}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col">
+                                    <label>Select Country</label><span class="danger-color">*</span>
+                                    <input type="text" placeholder="Select country" aria-label="Select country"
+                                        class="form-control" formControlName="countryId" [matAutocomplete]="auto">
+                                    <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+                                        <mat-option *ngFor="let option of filteredOptions|async" [value]="option.value">
+                                            {{option.value}}
+                                        </mat-option>
+                                    </mat-autocomplete>
+                                    <div class="danger" *ngIf="validationModel.displayMessage.countryId">
+                                        {{validationModel.displayMessage.countryId}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col">
+                                    <div class="form-group w-100" formGroupName="address">
+                                        <label>Address</label>
+                                        <input class="form-control" placeholder="Address" formControlName="address">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-4 col-sm-12">
+                            <div class="upload-card">
+                                <facets-image-attachment-capture
+                                    [imagePath]="createTeamMemberModel.imageURL == null? '../../assets/images/no-image.png' : createTeamMemberModel.imageURL "
+                                    (getfiles)="getFiles($event)"></facets-image-attachment-capture>
+                            </div>
+                            <div class="danger" *ngIf="validationModel.displayMessage.imageURL">
+                                {{validationModel.displayMessage.imageURL}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <facets-attachment-nic-passport
+                                [facetsAuthorization]="[superAdminPermissions.all, teamMemberRegistrationPermissions.viewAttachments]"
+                                [fileDatas]="nicFileDatas" (fileEmitter)="getNICFiles($event)"
+                                [teamMemberId]="teamMemberId!" [nicFileModels]="nicFileModels"
+                                [isUpdated]="true"></facets-attachment-nic-passport>
+
+                            <facets-attachment-other (fileEmitter)="getOtherFiles($event)"
+                                [facetsAuthorization]="[superAdminPermissions.all, teamMemberRegistrationPermissions.viewAttachments]"
+                                [fileDatas]="otherFileDatas" [teamMemberId]="teamMemberId!"
+                                [otherFileModels]="otherFileModels" [isUpdated]="true"></facets-attachment-other>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="info-card mt-4">
+                <div class="card-h container-fluid">
+                    <div class="sub-head">Assign Pass Category to Team Member</div>
+                </div>
+                <hr>
+                <div class="card-b">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-12">
+                                <div class="form-group w-100">
+                                    <mat-select class="form-control w-100" required placeholder="Select Pass Category*"
+                                        formControlName="passCategoryId">
+                                        <mat-option *ngFor="let passCategory of passCategories"
+                                            [value]="passCategory.key">
+                                            {{passCategory.value}}
+                                        </mat-option>
+                                    </mat-select>
+                                </div>
+                                <div class="danger" *ngIf="validationModel.displayMessage.passCategoryId">
+                                    {{validationModel.displayMessage.passCategoryId}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="action-footer mt-4">
+        <button type="button" class="btn btn-light mr-2" (click)="discard()">Discard</button>
+        <button type="button" class="btn btn-primary" (click)="create()" *ngIf="!isUpdate"
+            [facetsAuthorization]="[superAdminPermissions.all, teamMemberRegistrationPermissions.register]">Save</button>
+        <!-- <button type="button" class="btn btn-primary" (click)="updateRegisteredTeamMember(teamMemberId!)"
+            [facetsAuthorization]="[superAdminPermissions.all, teamMemberRegistrationPermissions.update]"
+            *ngIf="isUpdate == true"
+            [facetsAuthorization]="[superAdminPermissions.all, teamMemberRegistrationPermissions.register]">Update
+            Profile</button> -->
+        <button type="button" class="btn btn-primary" (click)="assignToEvent(teamMemberId!)"
+            [facetsAuthorization]="[superAdminPermissions.all, teamMemberRegistrationPermissions.update]"
+            *ngIf="isUpdate == true"
+            [facetsAuthorization]="[superAdminPermissions.all, teamMemberRegistrationPermissions.register]">Save</button>
+    </div>
+</section>
