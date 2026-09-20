@@ -23,9 +23,9 @@ export class EventService extends BaseService {
     getAll(searchModel: SearchRequestModel): Observable<ResponseResult<EventModel[]>> {
         return this.get<ResponseResult<EventModel[]>>(`events?pageSize=${searchModel.pageSize}&pageNumber=${searchModel.pageNumber}`);
     }
-    //Live event Id replace as request 86d0a7c8-be73-47c2-041e-08dc119fbf38 Local : c7c1b543-a444-4b1d-3f0c-08dcd9764f6b
+    //Live event Id replace as request 77D32DDB-D3E9-4EA2-C002-08DF09F52193 Local : c7c1b543-a444-4b1d-3f0c-08dcd9764f6b
     getById(id: string): Observable<ResponseResult<EventDetailModel>> {
-          return this.get<ResponseResult<EventDetailModel>>(`events/${'86d0a7c8-be73-47c2-041e-08dc119fbf38'}`);
+          return this.get<ResponseResult<EventDetailModel>>(`events/${'77D32DDB-D3E9-4EA2-C002-08DF09F52193'}`);
         // return this.get<ResponseResult<EventDetailModel>>(`events/${id}`);
     }
 

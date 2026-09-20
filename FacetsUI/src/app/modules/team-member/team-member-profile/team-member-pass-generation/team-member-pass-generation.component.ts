@@ -40,7 +40,7 @@ export class TeamMemberPassGenerationComponent {
         this.teamMemberId = params['teamMemberId'];
         if (this.teamMemberId != undefined)
         //this.passVerificationJson = JSON.stringify({ eventId: localStorage.getItem(appConstant.selectedEventId), teamMemberId: this.teamMemberId, type: 'teamMember' });
-        this.passVerificationJson = JSON.stringify({ eventId:'86d0a7c8-be73-47c2-041e-08dc119fbf38', teamMemberId: this.teamMemberId, type: 'teamMember' });
+        this.passVerificationJson = JSON.stringify({ eventId:'77D32DDB-D3E9-4EA2-C002-08DF09F52193', teamMemberId: this.teamMemberId, type: 'teamMember' });
       }
     });
   }

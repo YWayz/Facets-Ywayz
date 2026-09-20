@@ -13,8 +13,8 @@ export class EventInterceptor implements HttpInterceptor {
         var eventId = localStorage.getItem(appConstant.selectedEventId)
         request = request.clone({
             //  setHeaders: { 'x-facets-event-id': (eventId == null && eventId == undefined) ? '' : eventId }
-            //Live EventId '86d0a7c8-be73-47c2-041e-08dc119fbf38' Local 'c7c1b543-a444-4b1d-3f0c-08dcd9764f6b'
-             setHeaders: { 'x-facets-event-id': (eventId == null && eventId == undefined) ? '86d0a7c8-be73-47c2-041e-08dc119fbf38' : '86d0a7c8-be73-47c2-041e-08dc119fbf38' }
+            //Live EventId '77D32DDB-D3E9-4EA2-C002-08DF09F52193' Local 'c7c1b543-a444-4b1d-3f0c-08dcd9764f6b'
+             setHeaders: { 'x-facets-event-id': (eventId == null && eventId == undefined) ? '77D32DDB-D3E9-4EA2-C002-08DF09F52193' : '77D32DDB-D3E9-4EA2-C002-08DF09F52193' }
         });
 
         return next.handle(request);

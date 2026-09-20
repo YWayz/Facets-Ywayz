@@ -56,10 +56,10 @@ export class LookupsService extends BaseService {
       )
   }
 
-  //As Request Live eventId = 86d0a7c8-be73-47c2-041e-08dc119fbf38 local :'c7c1b543-a444-4b1d-3f0c-08dcd9764f6b'
+  //As Request Live eventId = 77D32DDB-D3E9-4EA2-C002-08DF09F52193 local :'c7c1b543-a444-4b1d-3f0c-08dcd9764f6b'
   getPassCategories(searchModel: SearchRequestModel, eventId: string, queryString?: string): Observable<ResponseResult<KeyValue<string, string>[]>> {
     // return this.get<ResponseResult<KeyValue<string, string>[]>>(`lookups/events/${eventId}/pass-categories?pageSize=${searchModel.pageSize}&pageNumber=${searchModel.pageNumber}${queryString}`)
-    return this.get<ResponseResult<KeyValue<string, string>[]>>(`lookups/events/${'86d0a7c8-be73-47c2-041e-08dc119fbf38'}/pass-categories?pageSize=${searchModel.pageSize}&pageNumber=${searchModel.pageNumber}${queryString}`)
+    return this.get<ResponseResult<KeyValue<string, string>[]>>(`lookups/events/${'77D32DDB-D3E9-4EA2-C002-08DF09F52193'}/pass-categories?pageSize=${searchModel.pageSize}&pageNumber=${searchModel.pageNumber}${queryString}`)
       .pipe(
         map((response => response)),
       )
@@ -67,7 +67,7 @@ export class LookupsService extends BaseService {
 
   getAllPassCategories(searchModel: SearchRequestModel, eventId: string): Observable<ResponseResult<KeyValue<string, string>[]>> {
     // return this.get<ResponseResult<KeyValue<string, string>[]>>(`lookups/events/${eventId}/pass-categories?pageSize=${searchModel.pageSize}&pageNumber=${searchModel.pageNumber}`)
-    return this.get<ResponseResult<KeyValue<string, string>[]>>(`lookups/events/${'86d0a7c8-be73-47c2-041e-08dc119fbf38'}/pass-categories?pageSize=${searchModel.pageSize}&pageNumber=${searchModel.pageNumber}`)
+    return this.get<ResponseResult<KeyValue<string, string>[]>>(`lookups/events/${'77D32DDB-D3E9-4EA2-C002-08DF09F52193'}/pass-categories?pageSize=${searchModel.pageSize}&pageNumber=${searchModel.pageNumber}`)
       .pipe(
         map((response => response)),
       )
@@ -75,7 +75,7 @@ export class LookupsService extends BaseService {
 
   getPassCategoryById(eventId: string, passCategoryId: string): Observable<ResponseResult<PassCategoryModel>> {
     // return this.get<ResponseResult<PassCategoryModel>>(`lookups/events/${eventId}/pass-categories/${passCategoryId}`)
-    return this.get<ResponseResult<PassCategoryModel>>(`lookups/events/${'86d0a7c8-be73-47c2-041e-08dc119fbf38'}/pass-categories/${passCategoryId}`)
+    return this.get<ResponseResult<PassCategoryModel>>(`lookups/events/${'77D32DDB-D3E9-4EA2-C002-08DF09F52193'}/pass-categories/${passCategoryId}`)
   }
 
   getCountries(): Observable<ResponseResult<KeyValue<string, string>[]>> {

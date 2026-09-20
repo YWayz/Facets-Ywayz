@@ -299,11 +299,11 @@ export class VisitorPayLaterComponent implements OnInit, AfterViewInit {
     });
 
     // this.totalFinalAmount = this.finalAmount + this.totalPavilionAmount;
-    if(this.finalAmount > 3000)
+    if(this.finalAmount > 5000)
       {
 
-        this.totalFinalAmount = 3000 + this.totalPavilionAmount;
-        this.finalAmount=3000;
+        this.totalFinalAmount = 5000 + this.totalPavilionAmount;
+        this.finalAmount=5000;
 
       }else{
         this.totalFinalAmount = this.finalAmount+ this.totalPavilionAmount;

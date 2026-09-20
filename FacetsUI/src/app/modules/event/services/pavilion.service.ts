@@ -41,10 +41,10 @@ export class PavilionService extends BaseService {
   updatePavilionStatus(eventId: string, id: string, body: { pavilionStatus: string }) {
     return this.put(`events/${eventId}/pavilions/${id}/status`, body)
   }
-//Live Event Id Replace as Request 86d0a7c8-be73-47c2-041e-08dc119fbf38 : local c7c1b543-a444-4b1d-3f0c-08dcd9764f6b
+//Live Event Id Replace as Request 77D32DDB-D3E9-4EA2-C002-08DF09F52193 : local c7c1b543-a444-4b1d-3f0c-08dcd9764f6b
   checkPavilionSessionsExist() {
     // return this.get<ResponseResult<boolean>>(`events/${localStorage.getItem(appConstant.selectedEventId)}/pavilions/check-pavilion-sessions-exists`);
-     return this.get<ResponseResult<boolean>>(`events/${'86d0a7c8-be73-47c2-041e-08dc119fbf38'}/pavilions/check-pavilion-sessions-exists`);
+     return this.get<ResponseResult<boolean>>(`events/${'77D32DDB-D3E9-4EA2-C002-08DF09F52193'}/pavilions/check-pavilion-sessions-exists`);
   }
 
   getAll(pavilionStatus?: string): Observable<ResponseResult<PavilionSummaryModel[]>> {
