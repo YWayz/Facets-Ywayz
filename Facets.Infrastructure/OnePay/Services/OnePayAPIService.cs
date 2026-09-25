@@ -1,13 +1,12 @@
-﻿using Facets.Infrastructure.OnePay.DTOs;
+using Facets.Infrastructure.OnePay.DTOs;
 using Facets.Infrastructure.OnePay.Interfaces;
 using Facets.SharedKernal;
 using Facets.SharedKernal.Exceptions;
 using Facets.SharedKernal.Helpers;
 using Facets.SharedKernal.Responses;
 using FluentValidation.Results;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
+using System.Globalization;
 using System.Net.Http.Json;
 
 namespace Facets.Infrastructure.OnePay.Services;
@@ -28,13 +27,12 @@ internal sealed class OnePayAPIService : IOnePayAPIService
     {
         try
         {
-            string serializedObj = Serializer.Serialize(newPaymentRequest);
+            // v3: hash = SHA256(app_id + currency + amount + HashSalt), hex, sent in the body
+            string hashInput = $"{newPaymentRequest.AppId}{newPaymentRequest.Currency}{newPaymentRequest.Amount.ToString("0.00", CultureInfo.InvariantCulture)}";
 
-            string hash = OnePayHelper.ComputeSHA256(_onepaySettings.HashSalt, serializedObj);
+            newPaymentRequest.Hash = OnePayHelper.ComputeSHA256(_onepaySettings.HashSalt, hashInput);
 
-            var uri = QueryHelpers.AddQueryString(_onepaySettings.PayentRequestEndPoint, "hash", hash);
-
-            var httpResponse = await _httpClient.PostAsJsonAsync(uri, newPaymentRequest);
+            var httpResponse = await _httpClient.PostAsJsonAsync(_onepaySettings.PaymentRequestEndPoint, newPaymentRequest);
 
             if (httpResponse.IsSuccessStatusCode)
             {

@@ -109,7 +109,7 @@ public static class AppConstants
 
         public static class ResponseCodes
         {
-            public const int SuccessCode = 1000;
+            public const int SuccessCode = 200; // was 1000 (v1) — v3 body success code
             public const int UnauthorizedDueToYourEncryptionIssue = 1001;
             public const int InvalidCserCredentials = 1002;
             public const int PleaseProvideRequiredData = 1003;

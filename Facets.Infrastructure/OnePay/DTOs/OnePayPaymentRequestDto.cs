@@ -8,7 +8,7 @@ public sealed class OnePayPaymentRequestDto
     public required string Currency { get; init; }
 
     [JsonPropertyName("amount")]
-    public required string Amount { get; init; }
+    public required decimal Amount { get; init; }
 
     [JsonPropertyName("app_id")]
     public required string AppId { get; init; }
@@ -31,7 +31,10 @@ public sealed class OnePayPaymentRequestDto
     [JsonPropertyName("transaction_redirect_url")]
     public required string TransactionRedirectUrl { get; init; }
 
-    [JsonPropertyName("additional_data")]
+    [JsonPropertyName("additionalData")]
     public required string AdditionalData { get; init; }
+
+    [JsonPropertyName("hash")]
+    public string Hash { get; set; } = null!;
 }
 
