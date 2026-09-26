@@ -7,6 +7,6 @@ public sealed class OnePaySettings
     public string AppToken { get; set; } = null!;
     public string HashSalt { get; init; } = null!;
     public string BaseURL { get; set; } = null!;
-    public string PayentRequestEndPoint { get; set; } = null!;
+    public string PaymentRequestEndPoint { get; set; } = null!;
     public string TransactionRedirectUrl { get; set; } = null!;
 }

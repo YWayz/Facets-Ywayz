@@ -124,7 +124,7 @@ internal sealed class PaymentService : IPaymentService
 
         var payingAmountValidationResponse = ValidatePayingAmount();
 
-        if (payingAmountValidationResponse.Success is false) return new(invoiceResponse.Errors);
+        if (payingAmountValidationResponse.Success is false) return new(payingAmountValidationResponse.Errors);
 
         AddPaymentInfoNoPaymentNeeded();
 

@@ -10,6 +10,7 @@ using Facets.SharedKernal.Extensions;
 using Facets.SharedKernal.Helpers;
 using Facets.SharedKernal.Responses;
 using Microsoft.Extensions.Options;
+using System.Globalization;
 
 namespace Facets.Infrastructure.OnePay.Services;
 
@@ -40,12 +41,12 @@ internal sealed class OnePayService : IOnePayService
         OnePayPaymentRequestDto newPaymentRequest = new()
         {
             Currency = AppConstants.OnePay.ApplicableCurrency,
-            Amount = OnePayHelper.FormatAmount(invoiceDto.TotalAmount),
-            AppId = _onepaySettings.AppID,
+            Amount = decimal.Parse(OnePayHelper.FormatAmount(invoiceDto.TotalAmount), CultureInfo.InvariantCulture),
+            AppId = _onepaySettings.AppID.Trim(),
             Reference = invoiceDto.ReferenceNumber,
             CustomerFirstName = invoiceDto.FirstName.RemoveWhitespaces(),
             CustomerLastName = invoiceDto.LastName.RemoveWhitespaces(),
-            CustomerPhoneNumber = invoiceDto.MobileNumber.Replace("+", "00").RemoveWhitespaces(),
+            CustomerPhoneNumber = invoiceDto.MobileNumber.RemoveWhitespaces(), // v3 wants E.164 (+94...); "00" substitution was v1-specific
             customerEmail = invoiceDto.Email.RemoveWhitespaces(),
             TransactionRedirectUrl = $"{_onepaySettings.TransactionRedirectUrl}?invoiceId={invoiceDto.InvoiceId}",
             AdditionalData = $"invoiceId:{invoiceDto.InvoiceId};referenceNumber:{invoiceDto.ReferenceNumber}",
