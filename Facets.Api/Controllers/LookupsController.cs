@@ -7,6 +7,7 @@ using Facets.Core.Passes.Interfaces;
 using Facets.SharedKernal.Helpers;
 using Facets.SharedKernal.Models;
 using Facets.SharedKernal.Responses;
+using Facets.Api.Policies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
@@ -61,6 +62,7 @@ public sealed class LookupsController : AdminAppControllerBase
     }
 
     [HttpGet("events/{eventId}/pass-categories")]
+    [AllowPublicSiteUser]
     [OutputCache(PolicyName = OutputCachePolicyNames.PassCategoryCachePolicy)]
     [ProducesResponseType(typeof(ResponseResult<IReadOnlyList<KeyValuePair<Guid, string>>>), StatusCodes.Status200OK)]
     public async Task<ActionResult> GetPassCategoryList([FromRoute] Guid eventId, [FromQuery] Paginator paginator, [FromQuery] PassCategoryLookupFilter filter, CancellationToken token)
@@ -79,6 +81,7 @@ public sealed class LookupsController : AdminAppControllerBase
     }
 
     [HttpGet("events/{eventId}/pass-categories/{passCategoryId}")]
+    [AllowPublicSiteUser]
     [ProducesResponseType(typeof(ResponseResult<IReadOnlyList<KeyValuePair<Guid, string>>>), StatusCodes.Status200OK)]
     public async Task<ActionResult> GetPassCategoryById([FromRoute] Guid eventId, [FromRoute] Guid passCategoryId, CancellationToken token)
     {

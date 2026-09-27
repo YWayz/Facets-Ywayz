@@ -18,5 +18,12 @@ internal sealed class PaymentConfig : IEntityTypeConfiguration<Payment>
         builder.Property(x => x.CardPaymentReferenceNumber).IsRequired(false).HasMaxLength(AppConstants.StringLengths.IdentityNumber);
 
         builder.Property(x => x.InvoiceAmount).DecimalPrecision();
+
+        // One online payment per OnePay transaction: stops a retried or concurrent webhook
+        // notification from recording the same payment twice.
+        builder.HasIndex(x => x.CardPaymentReferenceNumber)
+               .IsUnique()
+               .HasFilter("[IsOnlinePayment] = 1 AND [CardPaymentReferenceNumber] IS NOT NULL")
+               .HasDatabaseName("IX_Payment_CardPaymentReferenceNumber");
     }
 }

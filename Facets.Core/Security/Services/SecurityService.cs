@@ -52,7 +52,11 @@ public sealed class SecurityService : ISecurityService
 
         if (user is null) return new ResponseResult<AuthenticatedUserDto>(new UnauthorizedException("Invalid username/email and password"));
 
-        var signInResult = await _signInManager.PasswordSignInAsync(user.UserName!, model.Password, false, lockoutOnFailure: false);
+        // lockoutOnFailure: true makes Identity count wrong passwords and lock the account temporarily
+        // (default 5 attempts, 5 minutes), so admin passwords cannot be brute-forced.
+        var signInResult = await _signInManager.PasswordSignInAsync(user.UserName!, model.Password, false, lockoutOnFailure: true);
+
+        if (signInResult.IsLockedOut) return new ResponseResult<AuthenticatedUserDto>(new UnauthorizedException("Account is temporarily locked after too many failed attempts. Try again in a few minutes."));
 
         if (signInResult.Succeeded is false) return new ResponseResult<AuthenticatedUserDto>(new UnauthorizedException("Invalid user name/email and password"));
 

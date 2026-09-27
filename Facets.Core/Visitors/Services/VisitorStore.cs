@@ -82,7 +82,11 @@ internal sealed class VisitorStore : IVisitorStore
     {
         var searchResponse = await this.SearchVisitor(searchValue, token);
 
-        var visitor = searchResponse.Data!;
+        if (searchResponse.Success is false) return new(searchResponse.Errors);
+
+        if (searchResponse.Data is null) return new(new NotFoundException(nameof(searchValue), "Visitor", searchValue ?? string.Empty));
+
+        var visitor = searchResponse.Data;
 
         PublicVisitorSearchDto searchDto = new(visitor.IsAssocifyMember,
                                                visitor.IsRegisteredToFacets,

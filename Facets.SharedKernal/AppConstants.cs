@@ -61,6 +61,10 @@ public static class AppConstants
 
         public static readonly string[] ValidImageFileExtensions = { ".jpeg", ".jpg", ".png" };
 
+        public static readonly string[] ValidImageContentTypes = { "image/jpeg", "image/png" };
+
+        public const long MaxImageFileSizeBytes = 5 * 1024 * 1024; // 5 MB
+
     }
 
     public static class BlobStorage
@@ -81,6 +85,14 @@ public static class AppConstants
         public const int ValidMinutes = 5;
         public const int Length = 6;
         public const string Characters = "0123456789";
+
+        // Wrong codes allowed against one OTP before it is locked and a new one must be requested.
+        public const int MaxFailedAttempts = 5;
+
+        // OTPs that can be sent to one identity number per window, so a new OTP cannot be
+        // requested endlessly to reset the failed-attempt counter.
+        public const int MaxSendsPerWindow = 5;
+        public const int SendWindowMinutes = 60;
     }
 
     public static class PublicSite

@@ -1,8 +1,10 @@
 ﻿using Facets.Core.Reports.Filters;
+using Facets.Core.Security.AuthPolicies;
 using Facets.Core.Reports.Interfaces;
 using Facets.Core.Visitors.Filters;
 using Facets.Core.Visitors.Interfaces;
 using Facets.SharedKernal.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,7 +23,7 @@ namespace Facets.Api.Controllers.V1.Visitors
         }
 
         [HttpGet("visitor")]
-        //[Authorize(policy: ApplicationAuthPolicy.ReportPolicy.VisitorReport)]
+        [Authorize(policy: ApplicationAuthPolicy.ReportPolicy.VisitorReport)]
         //[ProducesResponseType(typeof(ResponseResult<IReadOnlyList<AttendenceReportDto>>), StatusCodes.Status200OK)]
 
         public async Task<ActionResult> AttendancReport([FromQuery] Paginator paginator, [FromQuery] AttendancereportFilter filter, CancellationToken token)

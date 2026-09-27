@@ -127,6 +127,9 @@ public static class IdentityConfig
             {
                 authPolicyApplicator.Apply(options);
             }
+
+            // Visitor (public-site) tokens may only reach endpoints that explicitly allow them.
+            options.DefaultPolicy = DefaultAuthorizationPolicy.Build();
         });
     }
 }

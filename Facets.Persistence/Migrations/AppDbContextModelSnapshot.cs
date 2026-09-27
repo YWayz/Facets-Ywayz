@@ -1279,6 +1279,11 @@ namespace Facets.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CardPaymentReferenceNumber")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Payment_CardPaymentReferenceNumber")
+                        .HasFilter("[IsOnlinePayment] = 1 AND [CardPaymentReferenceNumber] IS NOT NULL");
+
                     b.HasIndex("InvoiceId");
 
                     b.ToTable("Payment");
@@ -1459,6 +1464,9 @@ namespace Facets.Persistence.Migrations
 
                     b.Property<DateTimeOffset>("CreatedOn")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("FailedAttempts")
+                        .HasColumnType("int");
 
                     b.Property<string>("IdentityNumber")
                         .IsRequired()
