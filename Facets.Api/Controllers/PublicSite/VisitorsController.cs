@@ -5,6 +5,7 @@ using Facets.Core.Security.AuthPolicies;
 using Facets.Core.Visitors.DTOs;
 using Facets.Core.Visitors.Filters;
 using Facets.Core.Visitors.Interfaces;
+using Facets.SharedKernal.Exceptions;
 using Facets.SharedKernal.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -65,6 +66,14 @@ public sealed class VisitorsController : PublicAppControllerBase
     public async Task<ActionResult> UpdateVisitorOnline([FromRoute] Guid id, [FromBody] UpdateVisitorDto model)
     {
         if (await _ownership.OwnsVisitor(id, CancellationToken.None) is false) return NotOwnedResponse("Visitor", id);
+
+        // A visitor may not change their identity number. Ownership is keyed on the NIC/passport in the
+        // token, so letting a visitor set someone else's number would let them impersonate or lock out
+        // that person. Staff can still correct identity numbers through the admin API.
+        string? requestedIdentity = model.VisitorIdentityType is VisitorIdentityType.Passport ? model.PassportNumber : model.NICNumber;
+
+        if (IsOwnIdentity(requestedIdentity) is false)
+            return UnsuccessfullResponse(new ResponseResult(new BadRequestException(nameof(model.NICNumber), "Identity number cannot be changed online. Please contact the organisers.")));
 
         var response = await _visitorService.UpdateVisitor(id, model, CancellationToken.None);
 
