@@ -1,9 +1,11 @@
-﻿using Facets.Core.Security.AuthPolicies;
+﻿using Facets.Api.DIServiceExtensions;
+using Facets.Core.Security.AuthPolicies;
 using Facets.Core.Security.Dtos;
 using Facets.Core.Security.Interfaces;
 using Facets.SharedKernal.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Facets.Api.Controllers.PublicSite;
 
@@ -20,6 +22,7 @@ public sealed class OTPManagerController : PublicAppControllerBase
 
     [HttpPost("send")]
     [AllowAnonymous]
+    [EnableRateLimiting(RateLimitingConfig.OtpPolicy)]
     [ProducesResponseType(typeof(ResponseResult<string>), StatusCodes.Status200OK)]
     public async Task<ActionResult> GenerateOTP([FromBody] GenerateOTPDto model)
     {
@@ -30,6 +33,7 @@ public sealed class OTPManagerController : PublicAppControllerBase
 
     [HttpPost("verify")]
     [AllowAnonymous]
+    [EnableRateLimiting(RateLimitingConfig.OtpPolicy)]
     [ProducesResponseType(typeof(ResponseResult<PublicUserAuthenticatedDto>), StatusCodes.Status201Created)]
     public async Task<ActionResult> VerifyOTP([FromBody] VerifyOTPDto model)
     {

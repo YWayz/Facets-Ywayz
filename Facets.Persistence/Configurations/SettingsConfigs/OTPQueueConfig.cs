@@ -13,6 +13,7 @@ internal sealed class OTPQueueConfig : IEntityTypeConfiguration<OTPQueue>
         builder.Property(k => k.Code).IsRequired().HasMaxLength(AppConstants.OTP.Length);
         builder.Property(k => k.IdentityNumber).IsRequired().HasMaxLength(AppConstants.StringLengths.IdentityNumber);
         builder.Property(k => k.SentTo).IsRequired().HasMaxLength(AppConstants.StringLengths.Email);
+        builder.Ignore(k => k.IsLocked);
 
         builder.HasIndex(p => p.CreatedOn).IsDescending(true);
     }

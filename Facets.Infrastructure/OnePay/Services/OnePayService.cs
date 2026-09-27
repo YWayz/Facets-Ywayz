@@ -10,7 +10,6 @@ using Facets.SharedKernal.Extensions;
 using Facets.SharedKernal.Helpers;
 using Facets.SharedKernal.Responses;
 using Microsoft.Extensions.Options;
-using System.Globalization;
 
 namespace Facets.Infrastructure.OnePay.Services;
 
@@ -41,7 +40,9 @@ internal sealed class OnePayService : IOnePayService
         OnePayPaymentRequestDto newPaymentRequest = new()
         {
             Currency = AppConstants.OnePay.ApplicableCurrency,
-            Amount = decimal.Parse(OnePayHelper.FormatAmount(invoiceDto.TotalAmount), CultureInfo.InvariantCulture),
+            // Round directly rather than format-then-parse: the old round-trip formatted with the
+            // server's culture and parsed as invariant, so on a "1.500,00" locale the amount came out 100x too big.
+            Amount = OnePayHelper.RoundAmount(invoiceDto.TotalAmount),
             AppId = _onepaySettings.AppID.Trim(),
             Reference = invoiceDto.ReferenceNumber,
             CustomerFirstName = invoiceDto.FirstName.RemoveWhitespaces(),
@@ -76,6 +77,14 @@ internal sealed class OnePayService : IOnePayService
 
             _onePayRepository.AddOnePayRequestedPaymentResponseLog(requestedPaymentResponse);
         }
+    }
+
+    public async Task<ResponseResult<OnePayTransactionStatusDto>> GetTransactionStatus(string onePayTransactionId, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(onePayTransactionId))
+            return new(new BadRequestException(nameof(onePayTransactionId), "Transaction id is required"));
+
+        return await _onePayAPIService.GetTransactionStatus(onePayTransactionId, cancellationToken);
     }
 
 }

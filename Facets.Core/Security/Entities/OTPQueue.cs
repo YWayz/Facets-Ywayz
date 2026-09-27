@@ -24,6 +24,10 @@ public sealed class OTPQueue : EntityBase, ICreatedAudit
     public bool Verified { get; private set; }
     public DateTimeOffset? VerifiedAt { get; private set; }
 
+    public int FailedAttempts { get; private set; }
+
+    public bool IsLocked => FailedAttempts >= AppConstants.OTP.MaxFailedAttempts;
+
     private OTPQueue() { }
 
     public OTPQueue(string code, OTPType type, string identityNumber, string sendTo)
@@ -34,6 +38,11 @@ public sealed class OTPQueue : EntityBase, ICreatedAudit
 
         ValidUntil = DateTimeOffset.UtcNow.AddMinutes(AppConstants.OTP.ValidMinutes);
         SentTo = sendTo;
+    }
+
+    internal void RegisterFailedAttempt()
+    {
+        FailedAttempts++;
     }
 
     internal void MarkAsVerified()

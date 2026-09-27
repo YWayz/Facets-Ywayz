@@ -1,4 +1,5 @@
 ﻿using NanoidDotNet;
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -7,8 +8,6 @@ namespace Facets.SharedKernal.Helpers;
 public static class OnePayHelper
 {
     private const string NanoidAlphabets = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-    private static SHA256 Hasher = SHA256.Create();
 
     public static string ComputeSHA256(string hashSalt, string value)
     {
@@ -38,7 +37,17 @@ public static class OnePayHelper
 
     public static string FormatAmount(decimal totalAmount)
     {
-        return totalAmount.ToString("0.00");
+        // Always invariant: the server culture must never change the amount we send or hash.
+        return RoundAmount(totalAmount).ToString("0.00", CultureInfo.InvariantCulture);
+    }
+
+    /// <summary>
+    /// Rounds to 2 decimal places and forces a scale of 2 (1500 -> 1500.00), so the amount
+    /// serializes to JSON exactly as it is written into the request hash.
+    /// </summary>
+    public static decimal RoundAmount(decimal totalAmount)
+    {
+        return Math.Round(totalAmount, 2, MidpointRounding.AwayFromZero) + 0.00m;
     }
 
     public static string GenerateReferenceNumber()
