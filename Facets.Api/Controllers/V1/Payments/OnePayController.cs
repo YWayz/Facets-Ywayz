@@ -1,4 +1,5 @@
-﻿using Facets.Api.Services;
+﻿using Facets.Api.Policies;
+using Facets.Api.Services;
 using Facets.Infrastructure.OnePay.DTOs;
 using Facets.Infrastructure.OnePay.Interfaces;
 using Facets.SharedKernal.Exceptions;
@@ -9,6 +10,7 @@ namespace Facets.Api.Controllers.V1.Payments;
 
 [Route("api/onepay")]
 [ApiController]
+[AllowPublicSiteUser]
 public sealed class OnePayController : AppControllerBase
 {
     private readonly IOnePayService _onePayService;

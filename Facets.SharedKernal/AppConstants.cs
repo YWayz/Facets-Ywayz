@@ -61,6 +61,10 @@ public static class AppConstants
 
         public static readonly string[] ValidImageFileExtensions = { ".jpeg", ".jpg", ".png" };
 
+        public static readonly string[] ValidImageContentTypes = { "image/jpeg", "image/png" };
+
+        public const long MaxImageFileSizeBytes = 5 * 1024 * 1024; // 5 MB
+
     }
 
     public static class BlobStorage

@@ -6,17 +6,24 @@ using Facets.Core.Common.Interfaces;
 using Facets.SharedKernal.Exceptions;
 using Facets.SharedKernal.Helpers;
 using Facets.SharedKernal.Responses;
+using Microsoft.Extensions.Options;
+using System.Collections.Concurrent;
 
 namespace Facets.Infrastructure.FileStorage;
 
 internal sealed class FileRespository : IFileRespository
 {
     private readonly BlobServiceClient _blobServiceClient;
+    private readonly FileStorageSettings _settings;
     private const string ContentType = "application/octet-stream";
 
-    public FileRespository(BlobServiceClient blobServiceClient)
+    // Containers whose access level has already been checked in this process.
+    private static readonly ConcurrentDictionary<string, bool> _preparedContainers = new(StringComparer.OrdinalIgnoreCase);
+
+    public FileRespository(BlobServiceClient blobServiceClient, IOptions<FileStorageSettings> settings)
     {
         _blobServiceClient = blobServiceClient;
+        _settings = settings.Value;
     }
 
     public async Task<ResponseResult> DeleteFile(string containerName, string blobName, CancellationToken token)
@@ -79,7 +86,25 @@ internal sealed class FileRespository : IFileRespository
     {
         var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
 
-        await containerClient.CreateIfNotExistsAsync(publicAccessType: PublicAccessType.Blob);
+        if (_preparedContainers.ContainsKey(containerName)) return containerClient;
+
+        // Files here include NIC scans and photos, so containers are private and links are signed
+        // (see BlobFileUrlSigner). Containers created public by earlier versions are switched to private.
+        var accessType = _settings.PrivateContainers ? PublicAccessType.None : PublicAccessType.Blob;
+
+        await containerClient.CreateIfNotExistsAsync(publicAccessType: accessType);
+
+        if (_settings.PrivateContainers)
+        {
+            var properties = await containerClient.GetPropertiesAsync();
+
+            if (properties.Value.PublicAccess is not null && properties.Value.PublicAccess != PublicAccessType.None)
+            {
+                await containerClient.SetAccessPolicyAsync(PublicAccessType.None);
+            }
+        }
+
+        _preparedContainers[containerName] = true;
 
         return containerClient;
     }

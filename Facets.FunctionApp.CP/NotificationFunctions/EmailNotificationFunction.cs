@@ -23,7 +23,7 @@ public sealed class EmailNotificationFunction
     {
         try
         {
-            _logger.LogInformation($"Sending email to: {emailMessage.To} | Subject: {emailMessage.Subject}");
+            _logger.LogInformation($"Sending email to: {MaskEmail(emailMessage.To)} | Subject: {emailMessage.Subject}");
             // SMTP credentials come from Function App settings, never from source code.
             string from = RequiredSetting("Smtp_From");
             string fromPassword = RequiredSetting("Smtp_Password");
@@ -52,12 +52,12 @@ public sealed class EmailNotificationFunction
             await client.AuthenticateAsync(from, fromPassword);
             await client.SendAsync(message);
             await client.DisconnectAsync(true);
-            _logger.LogInformation($"Sent email to: {emailMessage.To} | Subject: {emailMessage.Subject}");
+            _logger.LogInformation($"Sent email to: {MaskEmail(emailMessage.To)} | Subject: {emailMessage.Subject}");
         }
         catch (Exception ex)
         {
             string message = $"""
-            Failed sending email to: {emailMessage.To} | Subject: {emailMessage.Subject} |
+            Failed sending email to: {MaskEmail(emailMessage.To)} | Subject: {emailMessage.Subject} |
             Error Msg: {ex.InnerException?.Message ?? ex.Message}
             """;
             _logger.LogError(message);
@@ -69,4 +69,13 @@ public sealed class EmailNotificationFunction
         Environment.GetEnvironmentVariable(name) is { Length: > 0 } value
             ? value
             : throw new InvalidOperationException($"Function App setting '{name}' is missing. Add it under Settings > Environment variables. See DEPLOYMENT.md.");
+
+    // Logs go to Application Insights and are kept for months; keep personal data out of them.
+    private static string MaskEmail(string? email)
+    {
+        if (string.IsNullOrWhiteSpace(email)) return "(none)";
+        int at = email.IndexOf('@');
+        if (at <= 1) return "***" + (at >= 0 ? email[at..] : string.Empty);
+        return email[0] + "***" + email[(at - 1)..];
+    }
 }

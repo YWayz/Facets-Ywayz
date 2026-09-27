@@ -49,6 +49,10 @@ Setting names use `__` (two underscores) where the JSON would have nesting.
 | `Assocify__BaseURL`, `Assocify__TenantId`, `Assocify__FuncAppKeys__GetMemberBySearchValue`, `Assocify__FuncAppKeys__IsMemberAvailable` | Needed for Assocify member lookup |
 | `Cors__AllowedOrigins` | Comma-separated list. Defaults to `https://exhibition.facetssrilanka.com,https://facets-uat.azurewebsites.net`. Add your App Service or custom domain if it is different. |
 | `APPLICATIONINSIGHTS_CONNECTION_STRING` | Enables Application Insights |
+| `Swagger__Enabled` | `true` to expose Swagger UI outside Development (off by default; it lists every endpoint). |
+| `FileStorage__PrivateContainers` | Default `true`: uploaded files (NIC scans, photos, logos) are stored in private containers and the API returns short-lived signed links. Set `false` only to roll back to public containers. |
+| `FileStorage__SignedUrlLifetimeHours` | Default `12`. |
+| `FileStorage__PublicContainers` | Containers that stay public, default `common-images` (the email logo). |
 
 **Networking**
 
@@ -67,6 +71,7 @@ On the Azure SQL server, go to **Networking** and allow Azure services, or add t
 | `Smtp_From`, `Smtp_Password` | Sender account and app password for outgoing email. These used to be hard-coded in the source. |
 | `Smtp_Host`, `Smtp_Port` | Optional. Default to `smtp.gmail.com` and `587`. |
 | `TextIt_Id`, `TextIt_Password`, `TextIt_From` | SMS for Sri Lankan numbers |
+| `TextIt_BaseUrl` | Optional. Defaults to `https://textit.biz/sendmsg/index.php`. The old code used plain `http://`, sending the password unencrypted. If TextIt rejects HTTPS, set this to the `http://` URL knowingly. |
 | `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FromPhoneNumber` | SMS for other numbers |
 
 In OnePay's dashboard, set the payment notification URL to the function URL including its key:
@@ -95,7 +100,14 @@ The production frontend calls the API on its own host, so the same build works o
 
 `FacetsUI/package-lock.json` is now committed. Previously a clean `npm install` pulled newer, incompatible versions of `ngx-scanner-qrcode` and `@types/node`, and the production build failed.
 
-## 5. Checking it is working
+## 5. Data protection notes
+
+- **Private file storage.** On first use after this release the API switches its five containers (`visitor-documents`, `team-member-documents`, `team-member-profile-image`, `user-profile-images`, `event-logos`) to private and signs every file link it returns. The `AzureStorage` connection string must include the account key (the default "Connection string" from the portal does). If images stop loading, check the API log for "Storage client cannot sign URLs".
+- **Visitor tokens are confined to the public site.** Admin endpoints reject visitor (OTP) tokens unless marked `[AllowPublicSiteUser]`. If a public page starts getting 403s after this release, that endpoint needs the attribute.
+- **Visitor list report needs the "Generate visitor list report" claim.** The check had been commented out; staff roles that should see the report must have that claim.
+- **Rotate the leaked secrets.** The certificate private key and the Gmail app password were in the public repository and remain in its history. Reissue the certificate and change the mail password.
+
+## 6. Checking it is working
 
 - Browse to `https://<app>.azurewebsites.net/`. The site should load.
 - If the API fails to start, open **Log stream** and look for "Facets.Api cannot start". The message lists the missing settings.

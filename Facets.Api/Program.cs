@@ -5,6 +5,7 @@ using Facets.Core;
 using Facets.Core.Common.Interfaces;
 using Facets.Core.Security;
 using Facets.Infrastructure;
+using Facets.Infrastructure.FileStorage;
 using Facets.Infrastructure.NotificationServices;
 using Facets.Persistence;
 using Facets.SharedKernal.Interfaces;
@@ -52,6 +53,10 @@ var builder = WebApplication.CreateBuilder(args);
     services.AddScoped<ILoggedInUserService, LoggedInUserService>();
     services.AddScoped<IApplicationContext, ApplicationContext>();
     services.AddScoped<IPublicSiteOwnership, PublicSiteOwnership>();
+
+    // Every file URL leaving the API becomes a short-lived signed link (blob containers are private).
+    services.AddOptions<Microsoft.AspNetCore.Mvc.JsonOptions>()
+            .Configure<IFileUrlSigner>((options, signer) => options.JsonSerializerOptions.Converters.Add(new SignedFileUrlJsonConverter(signer)));
     services.TryAddScoped<IQueueService, QueueService>();
 
     services.Configure<JwtConfig>(builder.Configuration.GetSection(nameof(JwtConfig)));
@@ -83,21 +88,25 @@ else
     app.UseHsts();
 }
 
-app.UseSwagger();
-
-app.UseSwaggerUI(c =>
+// Swagger lists every endpoint and model. Only in Development, or where Swagger__Enabled=true is set on purpose.
+if (app.Environment.IsDevelopment() || app.Configuration.GetValue<bool>("Swagger:Enabled"))
 {
-    c.SwaggerEndpoint("/swagger/Admin/swagger.json", "Admin APIs");
-    c.SwaggerEndpoint("/swagger/Public/swagger.json", "Public APIs");
+    app.UseSwagger();
 
-    c.RoutePrefix = app.Environment.IsDevelopment() ? string.Empty : c.RoutePrefix;
-    c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
-
-    if (app.Environment.IsDevelopment())
+    app.UseSwaggerUI(c =>
     {
-        c.EnablePersistAuthorization();
-    }
-});
+        c.SwaggerEndpoint("/swagger/Admin/swagger.json", "Admin APIs");
+        c.SwaggerEndpoint("/swagger/Public/swagger.json", "Public APIs");
+
+        c.RoutePrefix = app.Environment.IsDevelopment() ? string.Empty : c.RoutePrefix;
+        c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
+
+        if (app.Environment.IsDevelopment())
+        {
+            c.EnablePersistAuthorization();
+        }
+    });
+}
 
 app.UseHttpsRedirection();
 
