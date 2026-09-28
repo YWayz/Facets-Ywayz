@@ -72,6 +72,27 @@ public static class IdentityConfig
 
                 options.Events = new JwtBearerEvents
                 {
+                    // A staff JWT lives for hours; without this a deleted or locked-out user kept working until it
+                    // expired. Visitor tokens are checked by PublicSiteUserAccessRequirementHandler instead.
+                    OnTokenValidated = async context =>
+                    {
+                        var principal = context.Principal;
+                        if (principal is null) return;
+
+                        string? subject = principal.FindFirst(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub)?.Value
+                                          ?? principal.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+                        if (subject == Facets.SharedKernal.AppConstants.PublicSite.PublicSiteUserId || Guid.TryParse(subject, out Guid userId) is false) return;
+
+                        var users = context.HttpContext.RequestServices.GetRequiredService<Facets.Core.Security.Interfaces.IUserSecurityRespository>();
+                        var user = await users.GetUser(userId, context.HttpContext.RequestAborted);
+
+                        if (user is null || user.IsDeleted || (user.LockoutEnd is not null && user.LockoutEnd > DateTimeOffset.UtcNow))
+                        {
+                            context.Fail("The account is no longer active.");
+                        }
+                    },
+
                     OnForbidden = async context =>
                     {
                         context.Response.ContentType = applicationJSONContentType;

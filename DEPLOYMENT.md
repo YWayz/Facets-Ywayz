@@ -49,6 +49,7 @@ Setting names use `__` (two underscores) where the JSON would have nesting.
 | `OnePaySettings__TransactionStatusEndPoint` | Defaults to `v3/transaction/status/` |
 | `Cors__AllowedOrigins` | Comma-separated list. Defaults to `https://exhibition.facetssrilanka.com,https://facets-uat.azurewebsites.net`. Add your App Service or custom domain if it is different. |
 | `APPLICATIONINSIGHTS_CONNECTION_STRING` | Enables Application Insights |
+| `PublicBaseUrl` | Public URL of the site, e.g. `https://exhibition.facetssrilanka.com/`. Used in password-reset emails so a forged Host header cannot redirect them. |
 | `Swagger__Enabled` | `true` to expose Swagger UI outside Development (off by default; it lists every endpoint). |
 | `FileStorage__PrivateContainers` | Default `true`: uploaded files (NIC scans, photos, logos) are stored in private containers and the API returns short-lived signed links. Set `false` only to roll back to public containers. |
 | `FileStorage__SignedUrlLifetimeHours` | Default `12`. |
@@ -69,6 +70,7 @@ On the Azure SQL server, go to **Do not set** `ASPNETCORE_FORWARDEDHEADERS_ENABL
 | `FUNCTIONS_WORKER_RUNTIME` | `dotnet-isolated` |
 | `AzureWebJobsStorage` | Same storage account as the API's `AzureStorage` |
 | `ArchiveAppAuditLogCron` | CRON for the audit-log archive, e.g. `0 0 2 * * *`. **If this is missing, the whole Function App fails to start.** |
+| (built in) | `ReconcilePaymentsTimerTrigger` runs every 15 minutes and records payments whose webhook was lost; `PurgeSecurityRowsTimerTrigger` deletes OTP rows older than 7 days and visitor token records older than 2 days at 02:30 UTC. No settings needed. |
 | `ConnectionStrings__MSSQLDbConnection` | Same database as the API |
 | `ConnectionStrings__AzureStorage` | Same as above |
 | `OnePaySettings__*` | Same values as the API. The payment webhook uses them to verify each payment with OnePay. |
@@ -110,6 +112,7 @@ The production frontend calls the API on its own host, so the same build works o
 - **Visitor tokens are confined to the public site.** Admin endpoints reject visitor (OTP) tokens unless marked `[AllowPublicSiteUser]`. If a public page starts getting 403s after this release, that endpoint needs the attribute.
 - **Visitor list report needs the "Generate visitor list report" claim.** The check had been commented out; staff roles that should see the report must have that claim.
 - **Selected event.** The admin app used to send one fixed event id in every request. It now sends the event the user selected, and the API rejects requests whose route event differs from that header. If staff see "The event in the request does not match the selected event", they need to switch to the right event in the header menu.
+- **Payments are self-healing.** The webhook, the payment result page and a 15-minute timer all go through the same `OnePayPaymentRecorder`, which asks OnePay before recording anything. A log line starting `UNAPPLIED PAYMENT` means OnePay confirmed money for an invoice that was cancelled; finance must refund or apply it by hand.
 - **Rotate the leaked secrets.** The certificate private key and the Gmail app password were in the public repository and remain in its history. Reissue the certificate and change the mail password.
 
 ## 6. Checking it is working

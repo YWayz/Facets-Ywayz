@@ -14,7 +14,7 @@ using System.Text;
 
 namespace Facets.Core.Payments.EventHandlers;
 
-internal sealed class VisitorRegistrationCompleteMessageSendingEventHandler : INotificationHandler<VisitorInvoicingEventEvent>
+internal sealed class VisitorRegistrationCompleteMessageSendingEventHandler : INotificationHandler<VisitorInvoicePaidEvent>
 {
     private readonly IVisitorService _visitorService;
     private readonly IEventService _eventService;
@@ -29,7 +29,7 @@ internal sealed class VisitorRegistrationCompleteMessageSendingEventHandler : IN
         _emailService = emailService;
     }
 
-    public async Task Handle(VisitorInvoicingEventEvent notification, CancellationToken cancellationToken)
+    public async Task Handle(VisitorInvoicePaidEvent notification, CancellationToken cancellationToken)
     {
         var eventRespone = await _eventService.GetEventById(notification.VisitorRegistration.EventId, cancellationToken);
 

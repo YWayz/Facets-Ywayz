@@ -90,16 +90,10 @@ export class VisitorRegistrationPaymentComponent implements OnInit, AfterViewIni
       this.totalPavilionAmount = 0;
     }
 
-    if(this.finalAmount > 5000)
-      {
-
-        this.totalFinalAmount = 5000 + this.totalPavilionAmount;
-        this.finalAmount=5000;
-
-      }else{
-        this.totalFinalAmount = this.finalAmount+ this.totalPavilionAmount;
-
-      }
+    // Must match the server: the invoice total (dates + pavilions) is capped at LKR 3,000.
+    const maxInvoiceTotal = 3000;
+    this.totalFinalAmount = Math.min(this.finalAmount + this.totalPavilionAmount, maxInvoiceTotal);
+    this.finalAmount = Math.min(this.finalAmount, maxInvoiceTotal);
 
     this.getPaymentSettings();
   }

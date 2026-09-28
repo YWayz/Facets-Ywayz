@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 var host = new HostBuilder()
      .ConfigureAppConfiguration(c =>
@@ -48,5 +49,19 @@ var host = new HostBuilder()
         services.TryAddScoped<IQueueService, QueueService>();
 
     }).Build();
+
+// The webhook and reconciliation need the OnePay settings; the notification functions need SMTP.
+// Missing values used to surface only as failures deep inside a function. Warn once at startup instead.
+{
+    var configuration = host.Services.GetRequiredService<IConfiguration>();
+    var startupLogger = host.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Startup");
+
+    string[] requiredKeys = { "OnePaySettings:BaseURL", "OnePaySettings:AppID", "OnePaySettings:AppToken", "OnePaySettings:HashSalt", "ConnectionStrings:MSSQLDbConnection", "AzureWebJobsStorage", "Smtp_From", "Smtp_Password", "ArchiveAppAuditLogCron" };
+
+    var missing = requiredKeys.Where(k => string.IsNullOrWhiteSpace(configuration[k])).ToList();
+
+    if (missing.Count > 0)
+        startupLogger.LogError("Function App settings missing: {Settings}. See DEPLOYMENT.md", string.Join(", ", missing.Select(k => k.Replace(":", "__"))));
+}
 
 host.Run();

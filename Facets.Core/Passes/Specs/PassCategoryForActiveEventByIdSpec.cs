@@ -38,6 +38,7 @@ internal sealed class PassCategoryForActiveEventByIdSpec : Specification<PassCat
                                                                                         s.PavilionId,
                                                                                         s.PassCategory.Name,
                                                                                         s.PassCategory.PassType!.Name))
-                                                                                        .ToList()));
+                                                                                        .ToList(),
+         e.PassCategoryType));
     }
 }

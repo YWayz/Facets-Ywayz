@@ -11,6 +11,7 @@ namespace Facets.Api.Controllers.V1.Visitors;
 
 [Route("api/visitors/{visitorId}/documents")]
 [Authorize(policy: ApplicationAuthPolicy.HasAccessToEvent)]
+[Authorize(policy: ApplicationAuthPolicy.VisitorPolicy.View)] // NIC scans and photos: event access alone is not enough
 public sealed class VisitorsDocumentsController : AdminAppControllerBase
 {
     private readonly IVisitorService _visitorService;

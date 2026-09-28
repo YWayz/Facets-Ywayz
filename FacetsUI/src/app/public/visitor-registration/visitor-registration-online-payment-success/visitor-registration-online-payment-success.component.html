@@ -4,19 +4,23 @@
         <div class="fadeIn first">
             <img *ngIf="invoiceId != undefined && isPaid" src="../../../../assets/public/green.png" alt="Login"
             width="200" height="200">
-            <img *ngIf="invoiceId != undefined && !isPaid" src="../../../../assets/public/red.png" alt="Login"
+            <img *ngIf="invoiceId != undefined && !isPaid && !isConfirming" src="../../../../assets/public/red.png" alt="Login"
                 width="260" height="170">
+            <img *ngIf="invoiceId != undefined && !isPaid && isConfirming" src="../../../../assets/public/yellow.png" alt="Login" width="200"
+                height="200">
             <img *ngIf="invoiceId == undefined" src="../../../../assets/public/yellow.png" alt="Login" width="200"
                 height="200">
         </div>
         <div *ngIf="invoiceId != undefined && isPaid" class="title-head">Congratulations</div>
         <div *ngIf="invoiceId != undefined && isPaid" class="title-des mt-4 mb-4">Your registration has been successful.<br> Please provide your NIC/ Passport at the counter to get your exhibition pass.</div>
-        <div *ngIf="invoiceId != undefined && !isPaid" class="title-head">Transaction Failed</div>
-        <div *ngIf="invoiceId != undefined && !isPaid" class="title-des">An error occured during payment please try again</div>
+        <div *ngIf="invoiceId != undefined && !isPaid && isConfirming" class="title-head">Confirming your payment</div>
+        <div *ngIf="invoiceId != undefined && !isPaid && isConfirming" class="title-des">Please wait a moment. Do not pay again.</div>
+        <div *ngIf="invoiceId != undefined && !isPaid && !isConfirming" class="title-head">Payment not received</div>
+        <div *ngIf="invoiceId != undefined && !isPaid && !isConfirming" class="title-des">We could not confirm a payment for this registration. If you were charged, do not pay again: the payment will be matched automatically within 15 minutes.</div>
         <div *ngIf="invoiceId == undefined" class="title-head">Something went wrong</div>
         <div *ngIf="invoiceId == undefined" class="title-des mb-4"></div>
        
-        <div *ngIf="invoiceId != undefined && !isPaid" class="input-field mt-4">
+        <div *ngIf="invoiceId != undefined && !isPaid && !isConfirming" class="input-field mt-4">
             <button type="button" class="submit" (click)="requestPayment()" [disabled]="isDisableButton">
                 <i *ngIf="isDisableButton" class="spinner-border spinner-border-sm me-2"></i>Try again</button>
         </div>

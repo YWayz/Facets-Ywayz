@@ -41,12 +41,24 @@ export class VisitorRegistrationOnlinePaymentSuccessComponent implements OnInit 
     })
   }
 
-  checkInvoicePaymentStatus(invoiceId: string) {
+  // OnePay's confirmation can arrive after the browser is redirected here. Poll for up to a minute
+  // before showing "failed"; a premature failure message led visitors to pay a second time.
+  isConfirming = true;
+  private readonly maxStatusChecks = 12;
+  private readonly statusCheckIntervalMs = 5000;
+
+  checkInvoicePaymentStatus(invoiceId: string, attempt: number = 1) {
     this.invoiceService.checkPaymentStatus(invoiceId).subscribe({
       next: (result: ResponseResult<boolean>) => {
         this.isPaid = result.data;
+        if (this.isPaid || attempt >= this.maxStatusChecks) {
+          this.isConfirming = false;
+        } else {
+          setTimeout(() => this.checkInvoicePaymentStatus(invoiceId, attempt + 1), this.statusCheckIntervalMs);
+        }
       },
       error: (error: ErrorResponse) => {
+        this.isConfirming = false;
         this.invoiceId = undefined;
         this.toasterService.error(error);
       }

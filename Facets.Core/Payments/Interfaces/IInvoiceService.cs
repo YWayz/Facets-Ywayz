@@ -17,4 +17,7 @@ public interface IInvoiceService
     Task<ResponseResult<InvoicePaymentDto>> InvoicePaymentByRegistration(Guid visitorRegistrationId, InvoiceFilter filter, CancellationToken token);
     Task<ResponseResult<bool>> CheckPaymentStatus(Guid invoiceId, CancellationToken token);
     Task CancelUnpaidInvoices(Guid eventId, Guid visitorId, Guid visitorRegistrationId, CancellationToken token);
+
+    /// <summary>Open (unpaid, not cancelled) invoices for a registration, tracked, with their line items.</summary>
+    Task<IReadOnlyList<Invoice>> GetOpenInvoices(Guid eventId, Guid visitorId, Guid visitorRegistrationId, CancellationToken token);
 }

@@ -12,4 +12,5 @@ public sealed record PassCategoryDto(Guid Id,
                                      bool isDefault = false,
                                      string passTypeName = null,
                                      IReadOnlyCollection<PassCategorySettingsDto> PassCategorySettings = null,
-                                     IReadOnlyCollection<PassCategoryPavilionSettingsDto> PassCategoryPavilionSettings = null);
+                                     IReadOnlyCollection<PassCategoryPavilionSettingsDto> PassCategoryPavilionSettings = null,
+                                     PassCategoryType PassCategoryType = PassCategoryType.None);

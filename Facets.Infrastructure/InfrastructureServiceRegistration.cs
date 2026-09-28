@@ -52,6 +52,7 @@ public static class InfrastructureServiceRegistration
         services.AddSingleton<IFileUrlSigner, BlobFileUrlSigner>();
         services.AddScoped<ISMSService, SMSService>();
         services.TryAddScoped<IOnePayService, OnePayService>();
+        services.TryAddScoped<IOnePayPaymentRecorder, OnePayPaymentRecorder>();
 
         var OnePaySettingsConfig = configuration.GetSection(nameof(OnePaySettings));
 

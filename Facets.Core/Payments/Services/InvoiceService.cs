@@ -101,6 +101,11 @@ internal sealed class InvoiceService : IInvoiceService
         return new(isPaid);
     }
 
+    public async Task<IReadOnlyList<Invoice>> GetOpenInvoices(Guid eventId, Guid visitorId, Guid visitorRegistrationId, CancellationToken token)
+    {
+        return await _invoiceRepository.GetInvoicesBySpec(new InvoicesToCancelSpec(eventId, visitorId, visitorRegistrationId), token, asTracking: true);
+    }
+
     public async Task CancelUnpaidInvoices(Guid eventId, Guid visitorId, Guid visitorRegistrationId, CancellationToken token)
     {
         var invoices = await _invoiceRepository.GetInvoicesBySpec(new InvoicesToCancelSpec(eventId, visitorId, visitorRegistrationId),

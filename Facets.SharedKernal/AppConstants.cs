@@ -113,6 +113,15 @@ public static class AppConstants
         public const int MaximumLengthOfSriLankaPhoneNumberWithoutCountryCode = 10;
     }
 
+    public static class Invoicing
+    {
+        /// <summary>
+        /// Highest total charged on one invoice, in LKR. The same value is shown by the public payment page;
+        /// the two used to disagree (3,000 server, 5,000 browser) so some totals could never be paid.
+        /// </summary>
+        public const decimal MaxInvoiceTotal = 3000M;
+    }
+
     public static class OnePay
     {
         public const string ApplicableCurrency = "LKR";

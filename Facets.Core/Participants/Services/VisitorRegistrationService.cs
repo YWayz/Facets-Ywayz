@@ -14,6 +14,7 @@ using Facets.SharedKernal.Models;
 using Facets.SharedKernal.Responses;
 using static Facets.SharedKernal.AppEnums;
 using Facets.Core.Events.Interfaces;
+using Facets.Core.Passes.Interfaces;
 using Facets.SharedKernal.Extensions;
 using Facets.Core.Common.Dtos;
 using Facets.SharedKernal.Helpers;
@@ -30,9 +31,12 @@ internal sealed class VisitorRegistrationService : IVisitorRegistrationService
     private readonly ISMSService _smsService;
     private readonly IEmailService _emailService;
 
+    private readonly IPassCategoryService _passCategoryService;
+
     public VisitorRegistrationService(IVisitorRegistrationRepository visitorRegistrationRepository, ILoggedInUserService loggedInUser, IModelValidator validator, IVisitorService visitorService, IEventService eventService, ISMSService smsService,
-        IEmailService emailService)
+        IEmailService emailService, IPassCategoryService passCategoryService)
     {
+        _passCategoryService = passCategoryService;
         _visitorRegistrationRepository = visitorRegistrationRepository;
         _loggedInUser = loggedInUser;
         _validator = validator;
@@ -205,6 +209,20 @@ internal sealed class VisitorRegistrationService : IVisitorRegistrationService
 
         else if (visitor.OTPVerificationRequired && visitor.OTPVerified is false)
             return new(new OperationFailedException("Visitor", "OTP verification requried"));
+
+        // The browser only shows eligible categories; the API must enforce the same rule, otherwise a crafted
+        // request can pick a free member or team-member category and skip payment.
+        var passCategoryResponse = await _passCategoryService.GetPassCategoryForActiveEventById(_loggedInUser.FacetsEventId, model.PassCategoryId, cancellationToken);
+
+        if (passCategoryResponse.Success is false) return new(passCategoryResponse.Errors);
+
+        var passCategory = passCategoryResponse.Data!;
+
+        if (string.Equals(passCategory.passTypeName, AppConstants.PassType.TeamMember, StringComparison.OrdinalIgnoreCase))
+            return new(new OperationFailedException("PassCategory", "This pass category is not available for visitors"));
+
+        if (passCategory.PassCategoryType is PassCategoryType.AssocifyMember && visitor.IsAssocifyMember is false)
+            return new(new OperationFailedException("PassCategory", "This pass category is only available to Assocify members"));
 
         VisitorRegistration entity = new(_loggedInUser.FacetsEventId,
                                          model.VisitorId,

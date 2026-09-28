@@ -32,11 +32,25 @@ internal sealed class InvoiceStore : IInvoiceStore
 
     public async Task<ResponseResult<Invoice>> CreateInvoice(CreateInvoiceDto model, CancellationToken cancellationToken)
     {
-        await _invoiceService.CancelUnpaidInvoices(model.EventId, model.VisitorId, model.VisitorRegistrationId, cancellationToken);
-
         var registration = await GetUnInvoicedItemsByRegistrationId();
 
         if (registration is null) return new(new OperationFailedException("Registration", "Registration not found"));
+
+        // If an open invoice already covers exactly these items, hand it back instead of cancelling it.
+        // A cancelled invoice may still have a live OnePay link; if the visitor completed that link the
+        // payment could not be applied. Reusing the invoice keeps one link and one price per set of items.
+        var openInvoices = await _invoiceService.GetOpenInvoices(model.EventId, model.VisitorId, model.VisitorRegistrationId, cancellationToken);
+
+        var currentItemIds = registration.VisitorAttendanceSchedules.Select(s => s.Id)
+                                         .Concat(registration.VisitorPavilionSessionAttendanceSchedules.Select(s => s.Id))
+                                         .ToHashSet();
+
+        var reusable = openInvoices.FirstOrDefault(i => i.InvoicedOnSite == model.InvoicedOnSite
+                                                        && i.InvoiceLineItems.Where(l => l.IsDeleted is false).Select(l => l.ItemId).ToHashSet().SetEquals(currentItemIds));
+
+        if (reusable is not null) return new(reusable);
+
+        await _invoiceService.CancelUnpaidInvoices(model.EventId, model.VisitorId, model.VisitorRegistrationId, cancellationToken);
 
         var eventDatesResponse = await ValidateEventDates();
 
