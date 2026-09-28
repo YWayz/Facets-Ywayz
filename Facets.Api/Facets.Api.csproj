@@ -72,13 +72,20 @@
     </Exec>
     <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
     <Message Importance="high" Text="Restoring dependencies using 'npm'. This may take several minutes..." />
-    <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm install --legacy-peer-deps" />
   </Target>
 
   <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
-    <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
-    <!--<Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
-    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build" />-->
+    <!--
+      As part of publishing, build the Angular site in production mode so wwwroot always contains the
+      current frontend. Previously these steps were commented out, so a publish shipped whatever old
+      FacetsUI\dist happened to be on the publishing machine, or no frontend at all.
+      Requires Node.js on the machine that publishes. To publish a dist you built yourself, pass
+      /p:SkipSpaBuild=true (dotnet publish -c Release /p:SkipSpaBuild=true).
+    -->
+    <Exec Condition=" '$(SkipSpaBuild)' != 'true' " WorkingDirectory="$(SpaRoot)" Command="npm ci" />
+    <Exec Condition=" '$(SkipSpaBuild)' != 'true' " WorkingDirectory="$(SpaRoot)" Command="npm run build -- --configuration production" />
+    <Error Condition="!Exists('$(SpaRoot)dist\index.html')" Text="The Angular build output (FacetsUI\dist\index.html) is missing, so the published site would have no frontend. Run 'npm run build' in FacetsUI, or publish without /p:SkipSpaBuild=true." />
 
     <!-- Include the newly-built files in the publish output -->
     <ItemGroup>

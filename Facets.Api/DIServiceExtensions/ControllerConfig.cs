@@ -27,6 +27,9 @@ public static class ControllerConfig
             cfg.Filters.Add(new ProducesResponseTypeAttribute(typeof(ErrorResponse), StatusCodes.Status403Forbidden));
 
             cfg.Filters.Add(new ProducesResponseTypeAttribute(typeof(ErrorResponse), StatusCodes.Status500InternalServerError));
+
+            // Route {eventId} must match the x-facets-event-id header the event-access policy checks.
+            cfg.Filters.Add<Facets.Api.Policies.EventScopeConsistencyFilter>();
         })
        .ConfigureApiBehaviorOptions(options =>
        {

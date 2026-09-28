@@ -1,6 +1,7 @@
 ﻿using Facets.Core.Counters.Entities;
 using Facets.Core.Participants.Entities;
 using Facets.Core.Payments.Events;
+using Facets.SharedKernal;
 using Facets.SharedKernal.Exceptions;
 using Facets.SharedKernal.Helpers;
 using Facets.SharedKernal.Interfaces;
@@ -80,7 +81,7 @@ public sealed class Invoice : EntityBase, ICreatedAudit, IUpdatedAudit, IDeleted
 
         SetLineItems(invoiceLineItems);
 
-        TotalAmount = _invoiceLineItems.Sum(s => s.Amount) > 3000 ? 3000: _invoiceLineItems.Sum(s => s.Amount);
+        TotalAmount = Math.Min(_invoiceLineItems.Sum(s => s.Amount), AppConstants.Invoicing.MaxInvoiceTotal);
 
         PaymentStatus = TotalAmount is 0 ? PaymentStatus.Free : PaymentStatus.Unpaid;
     }
@@ -121,6 +122,7 @@ public sealed class Invoice : EntityBase, ICreatedAudit, IUpdatedAudit, IDeleted
     internal void MarkAsPaid()
     {
         RegisterDomainEvent(new VisitorInvoicingEventEvent(this));
+        RegisterDomainEvent(new VisitorInvoicePaidEvent(this));
 
         if (PassCategorySetToChargable is false) return;
 

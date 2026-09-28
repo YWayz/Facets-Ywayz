@@ -25,33 +25,46 @@ internal sealed class OnePayAPIService : IOnePayAPIService
 
     public async Task<ResponseResult<OnePaymentRequestedPaymentAPIResponse>> RequestPayment(OnePayPaymentRequestDto newPaymentRequest)
     {
-        try
+        // v3: hash = SHA256(app_id + currency + amount + HashSalt), hex, sent in the body
+        string hashInput = $"{newPaymentRequest.AppId}{newPaymentRequest.Currency}{newPaymentRequest.Amount.ToString("0.00", CultureInfo.InvariantCulture)}";
+
+        newPaymentRequest.Hash = OnePayHelper.ComputeSHA256(_onepaySettings.HashSalt, hashInput);
+
+        var httpResponse = await _httpClient.PostAsJsonAsync(_onepaySettings.PaymentRequestEndPoint, newPaymentRequest);
+
+        if (httpResponse.IsSuccessStatusCode is false)
         {
-            // v3: hash = SHA256(app_id + currency + amount + HashSalt), hex, sent in the body
-            string hashInput = $"{newPaymentRequest.AppId}{newPaymentRequest.Currency}{newPaymentRequest.Amount.ToString("0.00", CultureInfo.InvariantCulture)}";
+            string error = await httpResponse.Content.ReadAsStringAsync();
 
-            newPaymentRequest.Hash = OnePayHelper.ComputeSHA256(_onepaySettings.HashSalt, hashInput);
-
-            var httpResponse = await _httpClient.PostAsJsonAsync(_onepaySettings.PaymentRequestEndPoint, newPaymentRequest);
-
-            if (httpResponse.IsSuccessStatusCode)
-            {
-                var result = await HandleResponse<OnePaymentRequestedPaymentAPIResponse>(httpResponse);
-
-                return result;
-            }
-
-            else
-            {
-                string error = await httpResponse.Content.ReadAsStringAsync();
-
-                return new(new OperationFailedException("RequestPayment", error));
-            }
+            return new(new OperationFailedException("RequestPayment", error));
         }
-        catch (Exception ex)
+
+        return await HandleResponse<OnePaymentRequestedPaymentAPIResponse>(httpResponse);
+    }
+
+    public async Task<ResponseResult<OnePayTransactionStatusDto>> GetTransactionStatus(string onePayTransactionId, CancellationToken cancellationToken)
+    {
+        OnePayTransactionStatusRequestDto request = new()
         {
-            throw;
+            AppId = _onepaySettings.AppID.Trim(),
+            OnePayTransactionId = onePayTransactionId,
+        };
+
+        var httpResponse = await _httpClient.PostAsJsonAsync(_onepaySettings.TransactionStatusEndPoint, request, cancellationToken);
+
+        if (httpResponse.IsSuccessStatusCode is false)
+        {
+            string error = await httpResponse.Content.ReadAsStringAsync(cancellationToken);
+
+            return new(new OperationFailedException("GetTransactionStatus", error));
         }
+
+        var result = await HandleResponse<OnePayTransactionStatusDto>(httpResponse);
+
+        if (result.Success && result.Data is null)
+            return new(new OperationFailedException("GetTransactionStatus", "OnePay returned no transaction data"));
+
+        return result;
     }
 
     private async Task<ResponseResult<T>> HandleResponse<T>(HttpResponseMessage? httpResponse)
@@ -60,9 +73,11 @@ internal sealed class OnePayAPIService : IOnePayAPIService
 
         var obj = await httpResponse.Content.ReadFromJsonAsync<OnePaymentResponse<T>>();
 
-        if (obj is { Status: not AppConstants.OnePay.ResponseCodes.SuccessCode }) return HandleError(obj);
+        if (obj is null) return new(new OperationFailedException("OnePayAPIResponse", "OnePay returned an empty response"));
 
-        return new(obj!.Data);
+        if (obj.Status is not AppConstants.OnePay.ResponseCodes.SuccessCode) return HandleError(obj);
+
+        return new(obj.Data!);
     }
 
     private static ResponseResult<T> HandleError<T>(OnePaymentResponse<T>? obj)

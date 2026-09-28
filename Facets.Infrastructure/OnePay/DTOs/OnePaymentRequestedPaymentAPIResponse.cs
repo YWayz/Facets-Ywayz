@@ -12,6 +12,7 @@ internal sealed class OnePaymentRequestedPaymentAPIResponse
     public Gateway? Gateway { get; init; }
 }
 
+[JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
 internal sealed class Amount
 {
     [JsonPropertyName("gross_amount")]

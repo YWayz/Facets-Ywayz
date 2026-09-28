@@ -3,7 +3,9 @@ using Facets.Core.Security.Interfaces;
 using Facets.Core.Security.ModulePermissions;
 using Facets.SharedKernal.Responses;
 using Microsoft.AspNetCore.Authorization;
+using Facets.Api.DIServiceExtensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Facets.Api.Controllers.V1.Security;
 
@@ -23,6 +25,7 @@ public sealed class SecurityController : AdminAppControllerBase
     /// <param name="model"></param>
     /// <returns>A Respoonse result object conataining the authenticated user info</returns>
     [AllowAnonymous]
+    [EnableRateLimiting(RateLimitingConfig.OtpPolicy)]
     [HttpPost("authenticate")]
     [ProducesResponseType(typeof(ResponseResult<AuthenticatedUserDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult> Authenticate([FromBody] AuthenticateUserDto model)
@@ -53,6 +56,7 @@ public sealed class SecurityController : AdminAppControllerBase
     }
 
     [AllowAnonymous]
+    [EnableRateLimiting(RateLimitingConfig.OtpPolicy)]
     [HttpPost("forgot-password")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult> SendPasswordResetEmail([FromBody] ForgotPasswordModel forgotPasswordModel)
@@ -63,6 +67,7 @@ public sealed class SecurityController : AdminAppControllerBase
     }
 
     [AllowAnonymous]
+    [EnableRateLimiting(RateLimitingConfig.OtpPolicy)]
     [HttpPost("reset-password")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult> ResetPassword([FromBody] ResetPasswordDto model)

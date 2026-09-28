@@ -15,7 +15,7 @@ internal sealed class PublicSiteEventListSpec : Specification<Event, PublicSiteE
                          w.PublishedToPublicSite == true &&
                          w.Status == EventStatus.Active &&
                          w.VisitorRegistrationEndsOn.Date >= currentDateTime.Date)
-             .OrderBy(s => s.VisitorRegistrationStartsOn);
+             .OrderByDescending(s => s.CreatedOn); // newest event first; the public site defaults to it
 
         Query.Select(e => new PublicSiteEventSummaryDto
         (

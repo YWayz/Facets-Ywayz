@@ -47,9 +47,12 @@ public static class InfrastructureServiceRegistration
 
         services.TryAddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
         services.AddScoped<IEmailService, EmailService>();
+        services.Configure<FileStorageSettings>(configuration.GetSection("FileStorage"));
         services.AddScoped<IFileRespository, FileRespository>();
+        services.AddSingleton<IFileUrlSigner, BlobFileUrlSigner>();
         services.AddScoped<ISMSService, SMSService>();
         services.TryAddScoped<IOnePayService, OnePayService>();
+        services.TryAddScoped<IOnePayPaymentRecorder, OnePayPaymentRecorder>();
 
         var OnePaySettingsConfig = configuration.GetSection(nameof(OnePaySettings));
 

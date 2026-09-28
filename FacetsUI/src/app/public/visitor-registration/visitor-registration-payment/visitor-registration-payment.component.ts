@@ -77,9 +77,7 @@ export class VisitorRegistrationPaymentComponent implements OnInit, AfterViewIni
     };
     this.validationModel.formsErrorValidator = new GenericValidator(this.validationModel.validationMessages);
 
-    //Replace s request Event Id ='c7c1b543-a444-4b1d-3f0c-08dcd9764f6b'
-     this.eventId = '77D32DDB-D3E9-4EA2-C002-08DF09F52193'//'77D32DDB-D3E9-4EA2-C002-08DF09F52193'
-    //  this.eventId = localStorage.getItem(appConstant.selectedEventId)!.toString();
+    this.eventId = localStorage.getItem(appConstant.selectedEventId)!.toString();
   }
 
   ngOnInit(): void {
@@ -92,16 +90,10 @@ export class VisitorRegistrationPaymentComponent implements OnInit, AfterViewIni
       this.totalPavilionAmount = 0;
     }
 
-    if(this.finalAmount > 5000)
-      {
-
-        this.totalFinalAmount = 5000 + this.totalPavilionAmount;
-        this.finalAmount=5000;
-
-      }else{
-        this.totalFinalAmount = this.finalAmount+ this.totalPavilionAmount;
-
-      }
+    // Must match the server: the invoice total (dates + pavilions) is capped at LKR 3,000.
+    const maxInvoiceTotal = 3000;
+    this.totalFinalAmount = Math.min(this.finalAmount + this.totalPavilionAmount, maxInvoiceTotal);
+    this.finalAmount = Math.min(this.finalAmount, maxInvoiceTotal);
 
     this.getPaymentSettings();
   }

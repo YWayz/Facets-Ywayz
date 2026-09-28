@@ -40,7 +40,11 @@ internal sealed class OnlineVisitorCreatingSendOTPEventHandler : INotificationHa
 
 
 
-        if (response.Success is false) throw (new OperationFailedException("OTP", "Failed to generate OTP"));
+        if (response.Success is false)
+        {
+            var error = response.Errors.FirstOrDefault();
+            throw new OperationFailedException(error.Key ?? "OTP", error.Value?.FirstOrDefault() ?? "Failed to generate OTP");
+        }
 
         await SendOTPNotification();
 

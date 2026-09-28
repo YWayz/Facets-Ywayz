@@ -1,4 +1,5 @@
-﻿using Ardalis.Specification;
+﻿using static Facets.SharedKernal.AppEnums;
+using Ardalis.Specification;
 using Facets.Core.Payments.Entities;
 using Facets.Infrastructure.OnePay.DTOs;
 
@@ -8,7 +9,8 @@ internal sealed class InvoiceForOnePaySpec : Specification<Invoice, OnePayInvoic
 {
     public InvoiceForOnePaySpec(Guid invoiceId)
     {
-        Query.Where(w => w.Id == invoiceId);
+        // A paid or cancelled invoice must never get a new payment link (double charging).
+        Query.Where(w => w.Id == invoiceId && w.PaymentStatus == PaymentStatus.Unpaid && w.InvoiceCancelled == false);
 
         Query.Select(w => new OnePayInvoiceDto(w.Id, 
                                                w.TotalAmount, 

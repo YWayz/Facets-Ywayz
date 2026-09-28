@@ -78,13 +78,16 @@ export class LayoutComponent {
     if (this.eventKeyValues.length == 0)
       return;
 
-    let selectedEventId = localStorage.getItem(appConstant.selectedEventId);
-    if (selectedEventId != null) {
-      this.activeEventName = this.eventKeyValues.find(p => p.key == selectedEventId)?.value!;
+    const selectedEventId = localStorage.getItem(appConstant.selectedEventId);
+    const stored = selectedEventId ? this.eventKeyValues.find(p => p.key == selectedEventId) : undefined;
+    if (stored) {
+      this.activeEventName = stored.value;
       return;
     }
 
-    let event = this.eventKeyValues[0];
+    // Nothing chosen yet, or the stored event is no longer available to this user:
+    // default to the most recently created event (the list is newest first).
+    const event = this.eventKeyValues[0];
     this.activeEventName = event.value;
     localStorage.setItem(appConstant.selectedEventId, event.key)
   }

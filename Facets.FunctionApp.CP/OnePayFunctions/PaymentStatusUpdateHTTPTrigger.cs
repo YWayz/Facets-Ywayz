@@ -1,153 +1,116 @@
 using Facets.Core.Payments.Entities;
 using Facets.FunctionApp.CP.OnePayFunctions.Models;
+using Facets.Infrastructure.OnePay.Interfaces;
 using Facets.Persistence;
-using Facets.SharedKernal.Exceptions;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using System.Web;
-using static Facets.SharedKernal.AppEnums;
 using static System.Net.WebRequestMethods;
 
 namespace Facets.FunctionApp.CP.OnePayFunctions;
 
+/// <summary>
+/// Receives OnePay payment notifications.
+///
+/// OnePay v3 callbacks are not signed, so the payload is only a hint: every notification that names a
+/// transaction is verified with OnePay's status API and recorded through <see cref="IOnePayPaymentRecorder"/>,
+/// the same code path the reconciliation timer and the payment result page use.
+///
+/// Outcomes that can never change (bad payload, unknown invoice, not paid) are logged and acknowledged so
+/// OnePay stops retrying. Transient failures (OnePay or the database unreachable) throw, so OnePay retries.
+/// </summary>
 public sealed class PaymentStatusUpdateHTTPTrigger
 {
     private readonly ILogger _logger;
     private readonly AppDbContext _dbContext;
-    private readonly IConfiguration _configuration;
-    private Invoice? _invoice;
+    private readonly IOnePayPaymentRecorder _recorder;
 
-    public PaymentStatusUpdateHTTPTrigger(ILoggerFactory loggerFactory, AppDbContext dbContext, IConfiguration configuration)
+    public PaymentStatusUpdateHTTPTrigger(ILoggerFactory loggerFactory, AppDbContext dbContext, IOnePayPaymentRecorder recorder)
     {
         _logger = loggerFactory.CreateLogger<PaymentStatusUpdateHTTPTrigger>();
         _dbContext = dbContext;
-        _configuration = configuration;
+        _recorder = recorder;
     }
 
     [Function(nameof(OnePayPaymentStatusUpdate))]
-    public async Task OnePayPaymentStatusUpdate([HttpTrigger(AuthorizationLevel.Function, Http.Post,Route = FuncAppConstants.OnePay.NotifyURLRoute)]
-                                                 HttpRequestData req)
+    public async Task OnePayPaymentStatusUpdate([HttpTrigger(AuthorizationLevel.Function, Http.Post, Route = FuncAppConstants.OnePay.NotifyURLRoute)]
+                                                 HttpRequestData req,
+                                                 CancellationToken cancellationToken)
     {
-        string? stringBody = string.Empty;
+        _logger.LogInformation("Payment notification webhook received");
+
+        string stringBody = await new StreamReader(req.Body).ReadToEndAsync(cancellationToken);
+
+        OnePayTransactionResult notification = ParseNotification(stringBody);
+
+        string? invoiceIdText = GetInvoiceId(notification.AdditionalData);
+
+        // Always keep an audit record of what OnePay sent, whatever happens next.
+        _dbContext.Set<PaymentGatewayNotification>().Add(new PaymentGatewayNotification(transactionId: notification.TransactionId,
+                                                                                         plRefNo: notification.PLRefNo,
+                                                                                         status: notification.Status,
+                                                                                         statusMessage: notification.StatusMessage,
+                                                                                         additionalData: notification.AdditionalData,
+                                                                                         dt: notification.DT,
+                                                                                         invoiceIdText));
+        await _dbContext.SaveChangesAsync(cancellationToken);
+
+        if (Guid.TryParse(invoiceIdText, out Guid invoiceId) is false)
+        {
+            _logger.LogError("Notification for transaction {TransactionId} has no valid invoice id; ignored", notification.TransactionId);
+            return;
+        }
+
+        // Even a "failed" notification is worth a status check: it costs one API call and OnePay's own
+        // answer, not the payload, decides.
+        var result = await _recorder.RecordIfPaid(invoiceId, notification.TransactionId, cancellationToken);
+
+        _logger.LogInformation("Notification for invoice {InvoiceId}, transaction {TransactionId}: {Result}", invoiceId, notification.TransactionId, result);
+    }
+
+    private OnePayTransactionResult ParseNotification(string body)
+    {
         try
         {
-            _logger.LogInformation("Payment notification webhook received");
+            var notification = JsonSerializer.Deserialize<OnePayTransactionResult>(body);
 
-            stringBody = await new StreamReader(req.Body).ReadToEndAsync();
-
-            var notification = JsonSerializer.Deserialize<OnePayTransactionResult>(stringBody);
-
-            if (notification is null)
-            {
-                _logger.LogError($"Unable to deseialize the payment update webhook payload");
-                throw new OperationFailedException("Payment update payload", "Unable to deserialize the payment update webhook payload");
-            }
-
-            var paymentNotification = LogIncomingPayHereNotification(notification);
-
-            await ValidateInvoice(notification);
-
-            AddPaymentInfo(paymentNotification);
-
-            await _dbContext.SaveChangesAsync();
+            if (notification is not null) return notification;
         }
-        catch (JsonException ex)
+        catch (JsonException)
         {
-            var keyValues = HttpUtility.ParseQueryString(stringBody);
-
-            int.TryParse(keyValues["status"], out int statusCode);
-
-            OnePayTransactionResult error = new()
-            {
-                Status = statusCode,
-                AdditionalData = null,
-                DT = null,
-                PLRefNo = null,
-                StatusMessage = keyValues["status_message"],
-                TransactionId = keyValues["transaction_id"],
-            };
-            var paymentNotification = LogIncomingPayHereNotification(error);
-            await _dbContext.SaveChangesAsync();
+            // Fall through: some statuses have been seen as form-encoded bodies.
         }
 
-        catch (Exception e)
+        var keyValues = HttpUtility.ParseQueryString(body);
+
+        int.TryParse(keyValues["status"], out int statusCode);
+
+        _logger.LogWarning("Payment notification body was not JSON; parsed as form data");
+
+        return new OnePayTransactionResult
         {
-            _logger.LogError($"Error Msg: {e.InnerException?.Message ?? e.Message}");
-            throw;
-        }
+            Status = statusCode,
+            StatusMessage = keyValues["status_message"],
+            TransactionId = keyValues["transaction_id"],
+            AdditionalData = keyValues["additional_data"],
+        };
     }
 
-    private void AddPaymentInfo(PaymentGatewayNotification paymentNotification)
+    /// <summary>additional_data is what we sent: "invoiceId:{guid};referenceNumber:{ref}". Null when missing or malformed.</summary>
+    private static string? GetInvoiceId(string? additionalData)
     {
-        if (paymentNotification.Status is not FuncAppConstants.OnePay.SuccessCode) return;
+        if (string.IsNullOrWhiteSpace(additionalData)) return null;
 
-        Payment payment = new(PaymentMethod.Card,
-                              "n/a",
-                              paymentNotification.TransactionId,
-                              _invoice!,
-                              isOnlinePayment: true);
-
-        _dbContext.Set<Payment>().Add(payment);
-    }
-
-    private PaymentGatewayNotification LogIncomingPayHereNotification(OnePayTransactionResult notification)
-    {
-        string? invoiceIdAsString = GetInvoiceId(notification);
-
-        PaymentGatewayNotification paymentNotification = new(transactionId: notification.TransactionId,
-                                                             plRefNo: notification.PLRefNo,
-                                                             status: notification.Status,
-                                                             statusMessage: notification.StatusMessage,
-                                                             additionalData: notification.AdditionalData,
-                                                             dt: notification.DT,
-                                                             invoiceIdAsString);
-
-        _dbContext.Set<PaymentGatewayNotification>().Add(paymentNotification);
-
-        return paymentNotification;
-    }
-
-    private async Task ValidateInvoice(OnePayTransactionResult notification)
-    {
-        string? invoiceIdAsString = GetInvoiceId(notification);
-
-        if (Guid.TryParse(invoiceIdAsString, out Guid invoiceId) is false)
+        foreach (var part in additionalData.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
         {
-            _logger.LogError($"Invalid invoice id: {invoiceIdAsString}");
-            throw new BadRequestException(nameof(invoiceId), "Invalid invoice id");
+            var keyValue = part.Split(':', 2, StringSplitOptions.TrimEntries);
+
+            if (keyValue.Length == 2 && keyValue[0].Equals("invoiceId", StringComparison.OrdinalIgnoreCase))
+                return keyValue[1];
         }
 
-        var invoice = await _dbContext.Set<Invoice>()
-                                      .IgnoreQueryFilters()
-                                      .AsTracking()
-                                      .Include(i => i.VisitorRegistration.VisitorAttendanceSchedules)
-                                      .Include(i => i.VisitorRegistration.VisitorPavilionSessionAttendanceSchedules)
-                                      .AsSplitQuery()
-                                      .FirstOrDefaultAsync(w => w.Id == invoiceId && w.InvoiceCancelled == false);
-
-        if (invoice is null)
-        {
-            _logger.LogError($"Invoice id ({invoiceId}) was not found");
-            throw new NotFoundException(nameof(invoice.Id), "Invoice", invoiceId);
-        }
-
-        if (invoice.PaymentStatus is PaymentStatus.Paid)
-        {
-            _logger.LogError($"Invoice id ({invoiceId}) is already paid");
-            throw new OperationFailedException("Invoice", $"Invoice id ({invoiceId}) is already paid");
-        }
-
-        _invoice = invoice;
-
-        _logger.LogInformation($"Valid invoice id: {invoice.Id}");
-    }
-
-    private static string? GetInvoiceId(OnePayTransactionResult notification)
-    {
-        return notification.AdditionalData?.Split(";")[0].Split(":")[1] ?? null;
+        return null;
     }
 }

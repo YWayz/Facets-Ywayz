@@ -4,6 +4,7 @@ namespace Facets.SharedKernal.Responses;
 public sealed class OnePaymentResponse<T>
 {
     [JsonPropertyName("status")]
+    [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
     public int Status { get; init; }
 
     [JsonPropertyName("message")]

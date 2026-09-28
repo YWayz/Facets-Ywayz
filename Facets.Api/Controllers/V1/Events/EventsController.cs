@@ -2,6 +2,7 @@
 using Facets.Core.Events.DTOs;
 using Facets.Core.Events.Filters;
 using Facets.Core.Events.Interfaces;
+using Facets.Api.Policies;
 using Facets.Core.Security.AuthPolicies;
 using Facets.SharedKernal.Models;
 using Facets.SharedKernal.Responses;
@@ -31,6 +32,7 @@ public sealed class EventsController : AdminAppControllerBase
     }
 
     [HttpGet("{id}", Name = nameof(GetEventById))]
+    [AllowPublicSiteUser]
     [ProducesResponseType(typeof(ResponseResult<EventDetailDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     public async Task<ActionResult> GetEventById([FromRoute] Guid id, CancellationToken token)

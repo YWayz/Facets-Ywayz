@@ -43,8 +43,7 @@ export class PavilionService extends BaseService {
   }
 //Live Event Id Replace as Request 77D32DDB-D3E9-4EA2-C002-08DF09F52193 : local c7c1b543-a444-4b1d-3f0c-08dcd9764f6b
   checkPavilionSessionsExist() {
-    // return this.get<ResponseResult<boolean>>(`events/${localStorage.getItem(appConstant.selectedEventId)}/pavilions/check-pavilion-sessions-exists`);
-     return this.get<ResponseResult<boolean>>(`events/${'77D32DDB-D3E9-4EA2-C002-08DF09F52193'}/pavilions/check-pavilion-sessions-exists`);
+    return this.get<ResponseResult<boolean>>(`events/${localStorage.getItem(appConstant.selectedEventId)}/pavilions/check-pavilion-sessions-exists`);
   }
 
   getAll(pavilionStatus?: string): Observable<ResponseResult<PavilionSummaryModel[]>> {

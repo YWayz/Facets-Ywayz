@@ -30,4 +30,9 @@ internal sealed class OTPRepository : BaseRepository, IOTPRepository
 
         return otp;
     }
+
+    public async Task<int> CountSentSince(string identityNumber, DateTimeOffset since)
+    {
+        return await _table.CountAsync(w => w.IdentityNumber == identityNumber && w.CreatedOn >= since);
+    }
 }

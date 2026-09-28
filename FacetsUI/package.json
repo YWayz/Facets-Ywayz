@@ -35,7 +35,7 @@
     "ngx-bootstrap": "^11.0.2",
     "ngx-color-picker": "^15.0.0",
     "ngx-image-cropper": "^7.1.2",
-    "ngx-scanner-qrcode": "^1.6.4",
+    "ngx-scanner-qrcode": "~1.6.4",
     "ngx-toastr": "^17.0.2",
     "ngx-webcam": "^0.4.1",
     "rxjs": "~7.8.0",
@@ -51,7 +51,11 @@
     "@types/fabric": "^5.3.3",
     "@types/file-saver": "^2.0.5",
     "@types/jasmine": "~4.3.0",
+<<<<<<< HEAD
     "@types/node": "^18.19.130",
+=======
+    "@types/node": "~18.19.0",
+>>>>>>> f6c2d43cf3d4e0adcf78da46058be67b945dd29d
     "@types/qrcode": "^1.5.2",
     "jasmine-core": "~4.6.0",
     "karma": "~6.4.0",

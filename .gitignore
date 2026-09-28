@@ -367,7 +367,7 @@ FodyWeavers.xsd
 /Facets.FunctionApp.CP/Properties/serviceDependencies.facets-test-func-cp - Zip Deploy.json
 /Facets.FunctionApp.CP/Properties/serviceDependencies.json
 /Facets.FunctionApp.CP/Properties/ServiceDependencies/facets-test-func-cp - Zip Deploy/profile.arm.json
-/FacetsUI/package-lock.json
+# FacetsUI/package-lock.json is committed on purpose: without it a clean install pulls newer, breaking package versions.
 /Facets.Api/Properties/ServiceDependencies/facets-uat - Zip Deploy/profile.arm.json
 /Facets.FunctionApp.CP/Properties/ServiceDependencies/facets-uat-func-asp - Zip Deploy/storage1.arm.json
 /Facets.FunctionApp.CP/Properties/serviceDependencies.facets-uat-func-asp - Zip Deploy.json
@@ -384,3 +384,14 @@ local.settings.json
 __azurite_db_*.json
 __blobstorage__/
 __queuestorage__/
+
+# Never commit certificates or private keys
+*.key
+*.pem
+*Private Key*
+*.backup
+local.settings.json*
+*.backup
+local.settings.json*
+*.backup
+local.settings.json*

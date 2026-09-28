@@ -1,4 +1,5 @@
-﻿using Facets.Core.Payments.DTOs;
+﻿using Facets.Api.DIServiceExtensions;
+using Facets.Core.Payments.DTOs;
 using Facets.Core.Payments.Filters;
 using Facets.Core.Payments.Interfaces;
 using Facets.Core.Security.AuthPolicies;
@@ -6,6 +7,8 @@ using Facets.SharedKernal.Models;
 using Facets.SharedKernal.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
+using Facets.Infrastructure.OnePay.Interfaces;
 
 namespace Facets.Api.Controllers.V1.Payments;
 
@@ -14,10 +17,14 @@ namespace Facets.Api.Controllers.V1.Payments;
 public sealed class InvoicesController : AdminAppControllerBase
 {
     private readonly IInvoiceService _invoiceService;
+    private readonly IOnePayPaymentRecorder _paymentRecorder;
+    private readonly ILogger<InvoicesController> _logger;
 
-    public InvoicesController(IInvoiceService invoiceService)
+    public InvoicesController(IInvoiceService invoiceService, IOnePayPaymentRecorder paymentRecorder, ILogger<InvoicesController> logger)
     {
         _invoiceService = invoiceService;
+        _paymentRecorder = paymentRecorder;
+        _logger = logger;
     }
 
     [HttpGet("{id}", Name = nameof(GetInvoiceById))]
@@ -50,10 +57,29 @@ public sealed class InvoicesController : AdminAppControllerBase
 
     [HttpGet("{invoiceId}/payment-status")]
     [AllowAnonymous]
+    [EnableRateLimiting(RateLimitingConfig.AnonymousPublicPolicy)]
     [ProducesResponseType(typeof(ResponseResult<bool>), StatusCodes.Status200OK)]
     public async Task<ActionResult> CheckPaymentStatus([FromRoute] Guid invoiceId, CancellationToken token)
     {
         var response = await _invoiceService.CheckPaymentStatus(invoiceId, token);
+
+        // The visitor often lands here before OnePay's notification arrives. If the invoice is still unpaid,
+        // ask OnePay directly and record the payment now instead of showing "failed" and inviting a second charge.
+        if (response.Success && response.Data is false)
+        {
+            try
+            {
+                var result = await _paymentRecorder.RecordIfPaid(invoiceId, transactionId: null, token);
+
+                if (result is PaymentRecordResult.Recorded or PaymentRecordResult.AlreadyPaid)
+                    response = await _invoiceService.CheckPaymentStatus(invoiceId, token);
+            }
+            catch (Exception ex)
+            {
+                // OnePay unreachable: report what the database says; the reconciliation timer will retry.
+                _logger.LogWarning(ex, "Payment status check could not reach OnePay for invoice {InvoiceId}", invoiceId);
+            }
+        }
 
         return response.Success ? Ok(response) : UnsuccessfullResponse(response);
     }
