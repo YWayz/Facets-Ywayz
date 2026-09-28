@@ -51,7 +51,10 @@ public static class PersistenceServiceRegistration
 
         services.AddHttpClient<IAssocifyMemberRepository, AssocifyMemberRepository>((serviceProvider, httpClient) =>
         {
-            httpClient.BaseAddress = new Uri(configuration["Assocify:BaseURL"] ?? string.Empty);
+            var associfyBaseUrl = configuration["Assocify:BaseURL"];
+
+            if (string.IsNullOrWhiteSpace(associfyBaseUrl) is false)
+                httpClient.BaseAddress = new Uri(associfyBaseUrl);
         });
 
         services.TryAddScoped<IVisitorRepository, VisitorRepository>();

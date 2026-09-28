@@ -18,7 +18,7 @@ import { FileDragDropDirective } from './directives/file-drag-drop.directive';
 import { MultiImageAttachmentCaptureComponent } from './components/multi-image-attachment-capture/multi-image-attachment-capture.component';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { QrScannerComponent } from './components/qr-scanner/qr-scanner.component';
-import { LOAD_WASM, NgxScannerQrcodeModule } from 'ngx-scanner-qrcode';
+import { LOAD_WASM, NgxScannerQrcodeComponent } from 'ngx-scanner-qrcode';
 import { TimepickerModule } from 'ngx-bootstrap/timepicker';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { ImageCropperModule } from 'ngx-image-cropper';
@@ -49,7 +49,7 @@ LOAD_WASM().subscribe((res: any) => { });
     MaterialModule,
     WebcamModule,
     ZXingScannerModule,
-    NgxScannerQrcodeModule,
+    NgxScannerQrcodeComponent,
     TimepickerModule.forRoot(),
     ColorPickerModule,
     ImageCropperModule
@@ -74,7 +74,7 @@ LOAD_WASM().subscribe((res: any) => { });
     MultiImageAttachmentCaptureComponent,
     ZXingScannerModule,
     QrScannerComponent,
-    NgxScannerQrcodeModule,
+    NgxScannerQrcodeComponent,
     TimepickerModule,
     ColorPickerModule,
     ImageCropperModule

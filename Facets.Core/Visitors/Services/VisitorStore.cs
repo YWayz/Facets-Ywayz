@@ -30,7 +30,11 @@ internal sealed class VisitorStore : IVisitorStore
     {
         int tenantId = int.Parse(_configuration["Assocify:TenantId"] ?? "0");
 
-        var associfyMemberResponse = await _associfyMemberService.IsVisitorAnAssocifyMember(tenantId, model.NICNumber, model.PassportNumber);
+        bool associfyConfigured = string.IsNullOrWhiteSpace(_configuration["Assocify:BaseURL"]) is false;
+
+        var associfyMemberResponse = associfyConfigured
+            ? await _associfyMemberService.IsVisitorAnAssocifyMember(tenantId, model.NICNumber, model.PassportNumber)
+            : new ResponseResult<bool>(false);
 
         if (associfyMemberResponse.Success is false) return new(new OperationFailedException("Associvy Memeber", "Assocify API failed"));
 
