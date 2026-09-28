@@ -14,7 +14,9 @@ namespace Facets.Core.Common.Specs;
 {
     public EventByUserLookupSpec(string userId)
     {
-        Query.Where(p => p.UserProfileId == new Guid(userId) && p.Event.Status == SharedKernal.AppEnums.EventStatus.Active);
+        // Newest event first: the admin app selects the first entry when the user has not chosen an event yet.
+        Query.Where(p => p.UserProfileId == new Guid(userId) && p.Event.Status == SharedKernal.AppEnums.EventStatus.Active)
+             .OrderByDescending(p => p.Event.CreatedOn);
 
         Query.Select(e => new KeyValuePair<Guid, string>
         (

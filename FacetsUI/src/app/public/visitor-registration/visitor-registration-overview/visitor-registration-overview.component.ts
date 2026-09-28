@@ -15,6 +15,10 @@ import { VisitorRegistrationPaymentComponent } from "../visitor-registration-pay
 import { VisitorRegistrationSuccessComponent } from "../visitor-registration-success/visitor-registration-success.component";
 import { VisitorVerificationModel } from '../../models/visitor-verification.model';
 import { PavilionService } from 'src/app/modules/event/services/pavilion.service';
+import { PublicSiteService } from '../../services/public-site.service';
+import { PublicSiteEventSummaryModel } from '../../models/public-site-event-summary.model';
+import { SearchRequestModel } from 'src/app/core/models/search-request.model';
+import { appConstant } from 'src/app/core/extensions/app-constants';
 import { VisitorRegistrationPavilionComponentimplements } from "../visitor-registration-pavilion/visitor-registration-pavilion.component";
 
 @Component({
@@ -50,14 +54,43 @@ export class VisitorRegistrationOverviewComponent implements OnInit, OnDestroy {
   pavilionService = inject(PavilionService);
   sharedService = inject(SharedService);
   activatedRoute = inject(ActivatedRoute);
+  publicSiteService = inject(PublicSiteService);
 
   ngOnInit(): void {
     this.sharedService.isUpdateOtp = false;
     this.sharedService.isUpdateProfile = false;
     this.sharedService.isUpdatePass = false;
     this.sharedService.isUpdateAttachment = false;
-    this.checkPavilionSessionsExist();
-    this.goToProfile();
+    this.ensureEventSelected(() => {
+      this.checkPavilionSessionsExist();
+      this.goToProfile();
+    });
+  }
+
+  // A visitor who opens the registration page directly (a shared link, a bookmark) has not picked an
+  // event on the landing page. Default to the most recently created event; the list is newest first.
+  private ensureEventSelected(next: () => void) {
+    if (localStorage.getItem(appConstant.selectedEventId)) {
+      next();
+      return;
+    }
+
+    this.publicSiteService.getAllEvents(new SearchRequestModel(1, 1)).subscribe({
+      next: (res: ResponseResult<PublicSiteEventSummaryModel[]>) => {
+        const newest = res.data?.[0];
+        if (newest) {
+          localStorage.setItem(appConstant.selectedEventId, newest.id);
+          next();
+        } else {
+          this.toasterService.warning('There is no event open for registration at the moment.');
+          this.router.navigate(['/']);
+        }
+      },
+      error: (err: ErrorResponse) => {
+        this.toasterService.error(err);
+        this.router.navigate(['/']);
+      }
+    });
   }
 
   setPassCategoryData(passCategories: string[]) {
