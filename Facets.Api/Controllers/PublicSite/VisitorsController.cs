@@ -6,6 +6,7 @@ using Facets.Core.Visitors.DTOs;
 using Facets.Core.Visitors.Filters;
 using Facets.Core.Visitors.Interfaces;
 using Facets.SharedKernal.Exceptions;
+using Facets.SharedKernal.Helpers;
 using Facets.SharedKernal.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -137,6 +138,6 @@ public sealed class VisitorsController : PublicAppControllerBase
     {
         return string.IsNullOrWhiteSpace(value) is false
                && string.IsNullOrWhiteSpace(_ownership.IdentityNumber) is false
-               && string.Equals(value!.Trim(), _ownership.IdentityNumber, StringComparison.OrdinalIgnoreCase);
+               && string.Equals(IdentityNumberHelper.Normalize(value), _ownership.IdentityNumber, StringComparison.Ordinal);
     }
 }

@@ -7,14 +7,23 @@ internal sealed class MarkAttendanceSchedulesEventHandler : INotificationHandler
 {
     public  Task Handle(VisitorInvoicingEventEvent notification, CancellationToken cancellationToken)
     {
-        foreach (var visitorEventDateAttendanceSchedule in notification.Invoice.VisitorRegistration.VisitorAttendanceSchedules)
+        // Only what this invoice billed becomes attendable. Marking every schedule on the registration let a
+        // visitor invoice one day, add more days, pay the one-day invoice and attend all of them.
+        var paidItemIds = notification.Invoice.InvoiceLineItems
+                                              .Where(l => l.IsDeleted is false)
+                                              .Select(l => l.ItemId)
+                                              .ToHashSet();
+
+        var registration = notification.Invoice.VisitorRegistration;
+
+        foreach (var schedule in registration.VisitorAttendanceSchedules.Where(s => paidItemIds.Contains(s.Id)))
         {
-            visitorEventDateAttendanceSchedule.MarkAsCanAttendEvent();
+            schedule.MarkAsCanAttendEvent();
         }
 
-        foreach (var visitorPavilionSessionAttendanceSchedule in notification.Invoice.VisitorRegistration.VisitorPavilionSessionAttendanceSchedules)
+        foreach (var schedule in registration.VisitorPavilionSessionAttendanceSchedules.Where(s => paidItemIds.Contains(s.Id)))
         {
-            visitorPavilionSessionAttendanceSchedule.MarkAsCanAttendPavilionSession();
+            schedule.MarkAsCanAttendPavilionSession();
         }
 
         return Task.CompletedTask;

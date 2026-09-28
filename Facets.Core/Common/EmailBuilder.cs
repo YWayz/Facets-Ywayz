@@ -8,11 +8,14 @@ namespace Facets.Core.Common;
 
 public sealed class EmailBuilder
 {
+    // Visitor-typed values go into HTML templates; encode them so a name cannot inject markup or scripts.
+    private static string H(string? value) => System.Net.WebUtility.HtmlEncode(value ?? string.Empty);
+
     public static EmailModel BuildOTP(string toEmailAddress, string code, string template)
     {
         StringBuilder emailBody = new(template);
 
-        emailBody.Replace("#otp_code#", code);
+        emailBody.Replace("#otp_code#", H(code));
 
         EmailModel email = new()
         {
@@ -37,13 +40,13 @@ public sealed class EmailBuilder
         StringBuilder emailBody = new(template);
 
         emailBody
-        .Replace("#event_name#", eventName)
-        .Replace("#visitor_reference#", visitorReference)
-        .Replace("#visitor_first_name#", visitorFirstName)
-        .Replace("#visitor_last_name#", visitorLastName)
+        .Replace("#event_name#", H(eventName))
+        .Replace("#visitor_reference#", H(visitorReference))
+        .Replace("#visitor_first_name#", H(visitorFirstName))
+        .Replace("#visitor_last_name#", H(visitorLastName))
         .Replace("#visitor_identity_type#", visitorIdentityType.ToString())
-        .Replace("#identification_number#", identificationNumber)
-        .Replace("#comma_delimetered_dates#", commaDelimeteredDates);
+        .Replace("#identification_number#", H(identificationNumber))
+        .Replace("#comma_delimetered_dates#", H(commaDelimeteredDates));
 
         EmailModel email = new()
         {
@@ -83,13 +86,13 @@ public sealed class EmailBuilder
         StringBuilder emailBody = new(template);
 
         emailBody
-        .Replace("#event_name#", eventName)
-        .Replace("#visitor_reference#", visitorReference)
-        .Replace("#visitor_first_name#", visitorFirstName)
-        .Replace("#visitor_last_name#", visitorLastName)
+        .Replace("#event_name#", H(eventName))
+        .Replace("#visitor_reference#", H(visitorReference))
+        .Replace("#visitor_first_name#", H(visitorFirstName))
+        .Replace("#visitor_last_name#", H(visitorLastName))
         .Replace("#visitor_identity_type#", visitorIdentityType.ToString())
-        .Replace("#identification_number#", identificationNumber)
-        .Replace("#comma_delimetered_dates#", commaDelimeteredDates);
+        .Replace("#identification_number#", H(identificationNumber))
+        .Replace("#comma_delimetered_dates#", H(commaDelimeteredDates));
 
         EmailModel email = new()
         {

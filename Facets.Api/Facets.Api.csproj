@@ -83,7 +83,7 @@
       Requires Node.js on the machine that publishes. To publish a dist you built yourself, pass
       /p:SkipSpaBuild=true (dotnet publish -c Release /p:SkipSpaBuild=true).
     -->
-    <Exec Condition=" '$(SkipSpaBuild)' != 'true' " WorkingDirectory="$(SpaRoot)" Command="npm install --legacy-peer-deps" />
+    <Exec Condition=" '$(SkipSpaBuild)' != 'true' " WorkingDirectory="$(SpaRoot)" Command="npm ci" />
     <Exec Condition=" '$(SkipSpaBuild)' != 'true' " WorkingDirectory="$(SpaRoot)" Command="npm run build -- --configuration production" />
     <Error Condition="!Exists('$(SpaRoot)dist\index.html')" Text="The Angular build output (FacetsUI\dist\index.html) is missing, so the published site would have no frontend. Run 'npm run build' in FacetsUI, or publish without /p:SkipSpaBuild=true." />
 

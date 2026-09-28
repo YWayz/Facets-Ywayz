@@ -30,6 +30,7 @@ public sealed class OnePayTransactionStatusDto
     public string? IPGTransactionId { get; init; }
 
     [JsonPropertyName("amount")]
+    [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
     public decimal Amount { get; init; }
 
     [JsonPropertyName("currency")]

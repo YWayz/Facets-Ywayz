@@ -10,6 +10,7 @@ using Facets.Infrastructure.NotificationServices;
 using Facets.Persistence;
 using Facets.SharedKernal.Interfaces;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Serilog;
 
@@ -17,10 +18,13 @@ var builder = WebApplication.CreateBuilder(args);
 {
     builder.AddSerilogConfig();
 
-    builder.Host.UseSerilog();
+    // writeToProviders: true also forwards Serilog events to the other ILogger providers,
+    // so Application Insights receives traces as well as requests.
+    builder.Host.UseSerilog((_, _, configuration) => configuration.WriteTo.Logger(Log.Logger), writeToProviders: true);
 
     // Fail fast with a clear list of missing settings instead of failing on every request later.
-    builder.ValidateRequiredConfiguration();
+    // Skipped at EF design time so `dotnet ef database update --connection ...` works without every app setting.
+    if (EF.IsDesignTime is false) builder.ValidateRequiredConfiguration();
 
     var services = builder.Services;
 
@@ -38,12 +42,19 @@ var builder = WebApplication.CreateBuilder(args);
     // the real client IP (used by rate limiting) and scheme are seen. ForwardLimit stays at its
     // default of 1, so only the right-most address (the one App Service's front end adds) is used
     // and a client cannot spoof its IP by sending its own X-Forwarded-For.
-    services.Configure<ForwardedHeadersOptions>(options =>
+    // If ASPNETCORE_FORWARDEDHEADERS_ENABLED is set, ASP.NET Core already registers this middleware; running
+    // it twice would let a client's own X-Forwarded-For header through, so configure it here only when it is not.
+    bool forwardedHeadersHandledByHost = string.Equals(Environment.GetEnvironmentVariable("ASPNETCORE_FORWARDEDHEADERS_ENABLED"), "true", StringComparison.OrdinalIgnoreCase);
+
+    if (forwardedHeadersHandledByHost is false)
     {
-        options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-        options.KnownNetworks.Clear();
-        options.KnownProxies.Clear();
-    });
+        services.Configure<ForwardedHeadersOptions>(options =>
+        {
+            options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            options.KnownNetworks.Clear();
+            options.KnownProxies.Clear();
+        });
+    }
 
     services.AddApplicationServices();
     services.AddInfrastructureServices(builder.Configuration);
@@ -74,7 +85,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 var app = builder.Build();
 
-app.UseForwardedHeaders();
+if (forwardedHeadersHandledByHost is false) app.UseForwardedHeaders();
+
+// Baseline security headers. No CSP yet: the Angular build uses inline styles.
+app.Use(async (context, next) =>
+{
+    var headers = context.Response.Headers;
+    headers["X-Content-Type-Options"] = "nosniff";
+    headers["X-Frame-Options"] = "DENY";
+    headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
+    headers["Permissions-Policy"] = "camera=(self), microphone=(), geolocation=()";
+    await next();
+});
 
 app.UseCustomExceptionHandler();
 
@@ -133,7 +155,8 @@ app.MapControllers().RequireAuthorization();
 //    opt.WatchPagePassword = builder.Configuration["WatchDog:Password"];
 //});
 
-app.MapFallbackToFile("index.html", new StaticFileOptions
+// Unknown API routes must return 404 JSON-less, not the Angular index page.
+app.MapFallbackToFile("{*path:regex(^(?!api).*$)}", "index.html", new StaticFileOptions
 {
     OnPrepareResponse = ctx =>
     {

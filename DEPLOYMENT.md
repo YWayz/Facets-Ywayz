@@ -40,13 +40,13 @@ Setting names use `__` (two underscores) where the JSON would have nesting.
 | `OnePaySettings__HashSalt` | |
 | `OnePaySettings__PaymentRequestEndPoint` | e.g. `v3/checkout/link/` |
 | `OnePaySettings__TransactionRedirectUrl` | Public-site payment result page, HTTPS |
+| `Assocify__BaseURL`, `Assocify__TenantId`, `Assocify__FuncAppKeys__GetMemberBySearchValue`, `Assocify__FuncAppKeys__IsMemberAvailable` | Member lookup. Required: every public request builds the Assocify client from these. |
 
 **App settings tab: optional**
 
 | Name | Notes |
 |---|---|
 | `OnePaySettings__TransactionStatusEndPoint` | Defaults to `v3/transaction/status/` |
-| `Assocify__BaseURL`, `Assocify__TenantId`, `Assocify__FuncAppKeys__GetMemberBySearchValue`, `Assocify__FuncAppKeys__IsMemberAvailable` | Needed for Assocify member lookup |
 | `Cors__AllowedOrigins` | Comma-separated list. Defaults to `https://exhibition.facetssrilanka.com,https://facets-uat.azurewebsites.net`. Add your App Service or custom domain if it is different. |
 | `APPLICATIONINSIGHTS_CONNECTION_STRING` | Enables Application Insights |
 | `Swagger__Enabled` | `true` to expose Swagger UI outside Development (off by default; it lists every endpoint). |
@@ -54,9 +54,13 @@ Setting names use `__` (two underscores) where the JSON would have nesting.
 | `FileStorage__SignedUrlLifetimeHours` | Default `12`. |
 | `FileStorage__PublicContainers` | Containers that stay public, default `common-images` (the email logo). |
 
+**Do not set** `ASPNETCORE_FORWARDEDHEADERS_ENABLED`. The app configures forwarded headers itself; setting both would let clients spoof their IP address to the rate limiter.
+
 **Networking**
 
-On the Azure SQL server, go to **Networking** and allow Azure services, or add the App Service's outbound IP addresses.
+On the Azure SQL server, go to **Do not set** `ASPNETCORE_FORWARDEDHEADERS_ENABLED`. The app configures forwarded headers itself; setting both would let clients spoof their IP address to the rate limiter.
+
+**Networking** and allow Azure services, or add the App Service's outbound IP addresses.
 
 ## 2. Function App (Facets.FunctionApp.CP) settings
 
@@ -105,6 +109,7 @@ The production frontend calls the API on its own host, so the same build works o
 - **Private file storage.** On first use after this release the API switches its five containers (`visitor-documents`, `team-member-documents`, `team-member-profile-image`, `user-profile-images`, `event-logos`) to private and signs every file link it returns. The `AzureStorage` connection string must include the account key (the default "Connection string" from the portal does). If images stop loading, check the API log for "Storage client cannot sign URLs".
 - **Visitor tokens are confined to the public site.** Admin endpoints reject visitor (OTP) tokens unless marked `[AllowPublicSiteUser]`. If a public page starts getting 403s after this release, that endpoint needs the attribute.
 - **Visitor list report needs the "Generate visitor list report" claim.** The check had been commented out; staff roles that should see the report must have that claim.
+- **Selected event.** The admin app used to send one fixed event id in every request. It now sends the event the user selected, and the API rejects requests whose route event differs from that header. If staff see "The event in the request does not match the selected event", they need to switch to the right event in the header menu.
 - **Rotate the leaked secrets.** The certificate private key and the Gmail app password were in the public repository and remain in its history. Reissue the certificate and change the mail password.
 
 ## 6. Checking it is working

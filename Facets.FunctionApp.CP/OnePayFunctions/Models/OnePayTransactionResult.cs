@@ -11,6 +11,7 @@ public sealed class OnePayTransactionResult
     public string? PLRefNo { get; init; }
 
     [JsonPropertyName("status")]
+    [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
     public int Status { get; init; }
 
     [JsonPropertyName("status_message")]

@@ -3,6 +3,7 @@ using Facets.Core.Payments.Entities;
 using Facets.Core.Visitors.Entities;
 using Facets.Persistence;
 using Facets.SharedKernal;
+using Facets.SharedKernal.Helpers;
 using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -65,8 +66,8 @@ public sealed class PublicSiteOwnership : IPublicSiteOwnership
             IsPublicSiteUser = subject == AppConstants.PublicSite.PublicSiteUserId;
 
             // Same claim PublicSiteUserAccessRequirementHandler validates the token with.
-            IdentityNumber = (user.FindFirst(JwtRegisteredClaimNames.Name)?.Value
-                              ?? user.FindFirst(ClaimTypes.Name)?.Value)?.Trim();
+            IdentityNumber = IdentityNumberHelper.Normalize(user.FindFirst(JwtRegisteredClaimNames.Name)?.Value
+                                                            ?? user.FindFirst(ClaimTypes.Name)?.Value);
         }
     }
 

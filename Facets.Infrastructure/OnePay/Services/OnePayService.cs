@@ -47,7 +47,7 @@ internal sealed class OnePayService : IOnePayService
             Reference = invoiceDto.ReferenceNumber,
             CustomerFirstName = invoiceDto.FirstName.RemoveWhitespaces(),
             CustomerLastName = invoiceDto.LastName.RemoveWhitespaces(),
-            CustomerPhoneNumber = invoiceDto.MobileNumber.RemoveWhitespaces(), // v3 wants E.164 (+94...); "00" substitution was v1-specific
+            CustomerPhoneNumber = OnePayHelper.ToE164(invoiceDto.MobileNumber), // v3 wants E.164 (+94...)
             customerEmail = invoiceDto.Email.RemoveWhitespaces(),
             TransactionRedirectUrl = $"{_onepaySettings.TransactionRedirectUrl}?invoiceId={invoiceDto.InvoiceId}",
             AdditionalData = $"invoiceId:{invoiceDto.InvoiceId};referenceNumber:{invoiceDto.ReferenceNumber}",
@@ -56,6 +56,10 @@ internal sealed class OnePayService : IOnePayService
         var response = await _onePayAPIService.RequestPayment(newPaymentRequest);
 
         if (response.Success is false) throw new OperationFailedException(response.Errors.First().Key, response.Errors.First().Value.First());
+
+        // Without the transaction id the webhook could never tie the payment back to this invoice.
+        if (string.IsNullOrWhiteSpace(response.Data?.IPGTransactionId) || string.IsNullOrWhiteSpace(response.Data.Gateway?.RedirectURL))
+            throw new OperationFailedException("OnePay", "OnePay returned an incomplete checkout response");
 
         LogRequestedPaymentResponse();
 

@@ -91,7 +91,7 @@ public static class AppConstants
 
         // OTPs that can be sent to one identity number per window, so a new OTP cannot be
         // requested endlessly to reset the failed-attempt counter.
-        public const int MaxSendsPerWindow = 5;
+        public const int MaxSendsPerWindow = 10;
         public const int SendWindowMinutes = 60;
     }
 

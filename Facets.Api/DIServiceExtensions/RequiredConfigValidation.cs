@@ -25,15 +25,18 @@ public static class RequiredConfigValidation
         ("OnePaySettings:HashSalt",             "OnePaySettings__HashSalt"),
         ("OnePaySettings:PaymentRequestEndPoint", "OnePaySettings__PaymentRequestEndPoint"),
         ("OnePaySettings:TransactionRedirectUrl", "OnePaySettings__TransactionRedirectUrl"),
-    };
-
-    // Only some features use these, so a missing one is logged as a warning rather than stopping startup.
-    private static readonly (string Key, string AzureName)[] OptionalSettings =
-    {
+        // Every public-site request resolves the Assocify client, which builds a Uri from BaseURL,
+        // so a missing value breaks availability checks, OTP and registration.
         ("Assocify:BaseURL",                             "Assocify__BaseURL"),
         ("Assocify:TenantId",                            "Assocify__TenantId"),
         ("Assocify:FuncAppKeys:GetMemberBySearchValue",  "Assocify__FuncAppKeys__GetMemberBySearchValue"),
         ("Assocify:FuncAppKeys:IsMemberAvailable",       "Assocify__FuncAppKeys__IsMemberAvailable"),
+    };
+
+    // Settings whose absence only degrades a feature; reported as a warning at startup.
+    private static readonly (string Key, string AzureName)[] OptionalSettings =
+    {
+        ("Cors:AllowedOrigins", "Cors__AllowedOrigins (defaults to the known Facets origins)"),
     };
 
     public static void ValidateRequiredConfiguration(this WebApplicationBuilder builder)
@@ -45,7 +48,7 @@ public static class RequiredConfigValidation
 
         if (missingOptional.Count > 0)
         {
-            Serilog.Log.Warning("Optional settings are missing (Assocify member lookup will not work): {Settings}",
+            Serilog.Log.Warning("Optional settings are missing: {Settings}",
                                 string.Join(", ", missingOptional.Select(s => s.AzureName)));
         }
 

@@ -36,11 +36,9 @@ export class TeamMemberPassGenerationComponent {
   constructor() {
     this.activatedRoute.params.subscribe({
       next: (params: Params) => {
-        console.log("teamMemberId"+params['teamMemberId']+""+localStorage.getItem(appConstant.selectedEventId));
         this.teamMemberId = params['teamMemberId'];
         if (this.teamMemberId != undefined)
-        //this.passVerificationJson = JSON.stringify({ eventId: localStorage.getItem(appConstant.selectedEventId), teamMemberId: this.teamMemberId, type: 'teamMember' });
-        this.passVerificationJson = JSON.stringify({ eventId:'77D32DDB-D3E9-4EA2-C002-08DF09F52193', teamMemberId: this.teamMemberId, type: 'teamMember' });
+          this.passVerificationJson = JSON.stringify({ eventId: localStorage.getItem(appConstant.selectedEventId), teamMemberId: this.teamMemberId, type: 'teamMember' });
       }
     });
   }

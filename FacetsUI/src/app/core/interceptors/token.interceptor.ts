@@ -28,9 +28,14 @@ export class TokenInterceptor implements HttpInterceptor {
         return next.handle(request).pipe(
             catchError((err) => {
                 if (err.status === 401) {
-                    this.router.navigate(['login'], {
-                        queryParams: { returnUrl: document.location.pathname },
-                    });
+                    if (request.url.toLowerCase().includes('/api/public/') || document.location.pathname.startsWith('/visitor')) {
+                        // Public-site session expired: back to the start, not the staff login.
+                        this.router.navigate(['/']);
+                    } else {
+                        this.router.navigate(['login'], {
+                            queryParams: { returnUrl: document.location.pathname },
+                        });
+                    }
                 }
                 const error = err.error;
                 return throwError(() => error);

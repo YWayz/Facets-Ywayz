@@ -89,6 +89,7 @@ public sealed class PaymentStatusUpdateHTTPTrigger
         var invoice = await _dbContext.Set<Invoice>()
                                       .IgnoreQueryFilters()
                                       .AsTracking()
+                                      .Include(i => i.InvoiceLineItems)
                                       .Include(i => i.VisitorRegistration.VisitorAttendanceSchedules)
                                       .Include(i => i.VisitorRegistration.VisitorPavilionSessionAttendanceSchedules)
                                       .AsSplitQuery()
@@ -96,7 +97,8 @@ public sealed class PaymentStatusUpdateHTTPTrigger
 
         if (invoice is null)
         {
-            _logger.LogError("Invoice {InvoiceId} for transaction {TransactionId} was not found or is cancelled; ignored", invoiceId, transactionId);
+            // Ops must see this: money may have been taken for an invoice that was cancelled by a later Pay click.
+            _logger.LogError("UNAPPLIED PAYMENT: invoice {InvoiceId} for transaction {TransactionId} was not found or is cancelled; the notification is stored in PaymentGatewayNotification for reconciliation", invoiceId, transactionId);
             return;
         }
 

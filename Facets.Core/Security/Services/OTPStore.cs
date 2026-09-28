@@ -38,6 +38,10 @@ internal sealed class OTPStore : IOTPStore
 
     public async Task<ResponseResult<string>> GenerateOTP(GenerateOTPDto model, CancellationToken cancellationToken)
     {
+        model = model with { IdentityNumber = IdentityNumberHelper.Normalize(model.IdentityNumber) ?? string.Empty };
+
+        if (model.IdentityNumber.Length == 0) return new(new BadRequestException(nameof(model.IdentityNumber), "Identity number is required"));
+
         var visitorResponse = await _visitorStore.SearchVisitor(model.IdentityNumber, cancellationToken);
 
         if (visitorResponse.Success is false) return new(new OperationFailedException("Visitor", "Failed to search visitor"));
@@ -100,11 +104,10 @@ internal sealed class OTPStore : IOTPStore
                 return EmaiMasklRegex.Replace(sendTo, m => new string('x', m.Length)).ToLower();
             }
 
-            if (sendTo.Length <= 2) return new string('X', sendTo.Length);
+            // Keep the first 3 characters (country code or leading 0) and the last 2 digits.
+            if (sendTo.Length <= 5) return new string('X', sendTo.Length);
 
-            string last2Digits = sendTo[^2..];
-
-            return last2Digits.PadLeft(sendTo.Length, 'X');
+            return sendTo[..3] + new string('X', sendTo.Length - 5) + sendTo[^2..];
         }
 
         string GetSendTo(GenerateOTPDto model, Visitors.DTOs.VisitorSearchDto visitor, bool isSriLankanNumber)
@@ -122,6 +125,10 @@ internal sealed class OTPStore : IOTPStore
 
     public async Task<ResponseResult<PublicUserAuthenticatedDto>> VerifyOTP(VerifyOTPDto model, CancellationToken cancellationToken)
     {
+        model = model with { IdentityNumber = IdentityNumberHelper.Normalize(model.IdentityNumber) ?? string.Empty };
+
+        if (model.IdentityNumber.Length == 0) return new(new BadRequestException(nameof(model.IdentityNumber), "Identity number is required"));
+
         var searchResponse = await _visitorStore.SearchVisitor(model.IdentityNumber, cancellationToken);
 
         if (searchResponse.Success is false) return new(searchResponse.Errors);

@@ -2,6 +2,7 @@
 using Facets.Core.Common.ValueObjects;
 using Facets.Core.Visitors.Events;
 using Facets.SharedKernal.Exceptions;
+using Facets.SharedKernal.Helpers;
 using Facets.SharedKernal.Interfaces;
 using Facets.SharedKernal.Models;
 using Facets.SharedKernal.Responses;
@@ -88,6 +89,9 @@ public sealed class Visitor : EntityBase, ICreatedAudit, IUpdatedAudit, IDeleted
 
         void SetIdentityType(VisitorIdentityType visitorIdentityType, string? nicNumber, string? passportNumber)
         {
+            nicNumber = IdentityNumberHelper.Normalize(nicNumber);
+            passportNumber = IdentityNumberHelper.Normalize(passportNumber);
+
             if (visitorIdentityType is VisitorIdentityType.NIC)
             {
                 PassportNumber = null;
@@ -124,6 +128,9 @@ public sealed class Visitor : EntityBase, ICreatedAudit, IUpdatedAudit, IDeleted
                              string? companyName,
                              AddressValueObject? address)
     {
+        nicNumber = IdentityNumberHelper.Normalize(nicNumber);
+        passportNumber = IdentityNumberHelper.Normalize(passportNumber);
+
         if (visitorIdentityType is VisitorIdentityType.NIC)
         {
             PassportNumber = null;

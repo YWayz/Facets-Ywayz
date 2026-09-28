@@ -25,6 +25,14 @@ public static class RateLimitingConfig
         {
             options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 
+            options.OnRejected = async (context, cancellationToken) =>
+            {
+                context.HttpContext.Response.ContentType = "application/json";
+                await context.HttpContext.Response.WriteAsync(
+                    "{\"errors\":[{\"key\":\"TooManyRequests\",\"value\":[\"Too many requests. Please wait a moment and try again.\"]}]}",
+                    cancellationToken);
+            };
+
             options.AddPolicy(OtpPolicy, httpContext =>
                 RateLimitPartition.GetFixedWindowLimiter(ClientKey(httpContext), _ => new FixedWindowRateLimiterOptions
                 {
